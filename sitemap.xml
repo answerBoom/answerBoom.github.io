@@ -83,7 +83,7 @@
   </url>
   
   <url>
-    <loc>https://answerboom.github.io/posts/d6e1643e.html</loc>
+    <loc>https://answerboom.github.io/posts/70556169.html</loc>
     
     <lastmod>2023-06-15</lastmod>
     
@@ -92,7 +92,7 @@
   </url>
   
   <url>
-    <loc>https://answerboom.github.io/posts/70556169.html</loc>
+    <loc>https://answerboom.github.io/posts/d6e1643e.html</loc>
     
     <lastmod>2023-06-15</lastmod>
     
@@ -173,7 +173,7 @@
   </url>
   
   <url>
-    <loc>https://answerboom.github.io/box/gallery/index.html</loc>
+    <loc>https://answerboom.github.io/box/nav/index.html</loc>
     
     <lastmod>2023-06-09</lastmod>
     
@@ -182,7 +182,7 @@
   </url>
   
   <url>
-    <loc>https://answerboom.github.io/box/nav/index.html</loc>
+    <loc>https://answerboom.github.io/box/gallery/index.html</loc>
     
     <lastmod>2023-06-09</lastmod>
     
@@ -216,6 +216,13 @@
     <priority>1.0</priority>
   </url>
 
+  
+  <url>
+    <loc>https://answerboom.github.io/tags/github/</loc>
+    <lastmod>2023-06-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
   
   <url>
     <loc>https://answerboom.github.io/tags/hexo/</loc>
@@ -294,14 +301,14 @@
     <priority>0.2</priority>
   </url>
   
+
+  
   <url>
-    <loc>https://answerboom.github.io/tags/github/</loc>
+    <loc>https://answerboom.github.io/categories/github/</loc>
     <lastmod>2023-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
-  
-
   
   <url>
     <loc>https://answerboom.github.io/categories/%E5%89%8D%E7%AB%AF/</loc>
@@ -326,13 +333,6 @@
   
   <url>
     <loc>https://answerboom.github.io/categories/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/</loc>
-    <lastmod>2023-06-15</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://answerboom.github.io/categories/github/</loc>
     <lastmod>2023-06-15</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
