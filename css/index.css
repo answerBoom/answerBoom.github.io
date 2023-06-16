@@ -1952,12 +1952,12 @@ figure.highlight pre .javascript .function {
 }
 .error404 #error-wrap {
   position: absolute;
-  top: 50%;
+  top: 30%;
   right: 0;
   left: 0;
   margin: 0 auto;
   padding: 60px 20px 0;
-  max-width: 1000px;
+  max-width: 800px;
   -webkit-transform: translate(0, -50%);
   -moz-transform: translate(0, -50%);
   -o-transform: translate(0, -50%);
@@ -2026,7 +2026,7 @@ figure.highlight pre .javascript .function {
 }
 .error404 #error-wrap .error-content .error-info .error_title {
   margin-top: -0.6em;
-  font-size: 9em;
+  font-size: 7em;
 }
 @media screen and (max-width: 768px) {
   .error404 #error-wrap .error-content .error-info .error_title {
@@ -9795,6 +9795,90 @@ hr:before {
   transition: all 0.3s ease-in-out;
 }
 
+
+
+
+/* 404页面显示最近文章/
+/* 404页面 */
+#error-wrap{
+  top: 40%;
+}
+
+#error-wrap .error-content .error-info .error_title{
+  margin-top: -3rem!important;
+}
+
+/* #error-wrap .error-content{
+  box-shadow: none!important;
+  border-radius: 12px;
+  background: var(--heo-card-bg)!important;
+} */
+
+#body-wrap.error404 .aside-list{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  bottom: 0px;
+  position: absolute;
+  padding: 1rem;
+  width: 100%;
+  overflow: scroll;
+}
+
+#body-wrap.error404 .aside-list .aside-list-group{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+#body-wrap.error404 .aside-list .aside-list-item{
+  padding: 0.5rem;
+}
+
+#body-wrap.error404 .aside-list .aside-list-item img{
+  width: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+#body-wrap.error404 .aside-list .aside-list-item .thumbnail{
+  overflow: hidden;
+  width: 230px;
+  height: 143px;
+  background: var(--heo-card-bg);
+  display: flex;
+}
+
+#body-wrap.error404 .aside-list .aside-list-item .content .title{
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  line-height: 1.5;
+  justify-content: center;
+  align-items: flex-end;
+  align-content: center;
+  padding-top: 0.5rem;
+}
+
+#body-wrap.error404 .aside-list .aside-list-item .content time{
+  display: none;
+}
+
+#error-wrap .error-content .error-info a {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.3rem 1.5rem;
+  background: var(--btn-bg);
+  color: var(--btn-color);
+}
+a.button--animated {
+  width: 150px;
+  border-radius: 8px !important;
+  margin: 0 auto 0;
+}
 .search-dialog {
   position: fixed;
   top: 10%;
