@@ -2,53 +2,53 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>Categories on 🐻 liyBlog</title>
-    <link>answerboom.github.io/categories/</link>
+    <link>https://answerboom.github.io/categories/</link>
     <description>Recent content in Categories on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="answerboom.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/categories/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>机器学习</title>
-      <link>answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
+      <link>https://answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
       <pubDate>Thu, 27 Jul 2023 21:11:50 +0800</pubDate>
       
-      <guid>answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</guid>
+      <guid>https://answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</guid>
       <description></description>
     </item>
     
     <item>
       <title>github</title>
-      <link>answerboom.github.io/categories/github/</link>
+      <link>https://answerboom.github.io/categories/github/</link>
       <pubDate>Thu, 08 Jun 2023 20:12:22 +0800</pubDate>
       
-      <guid>answerboom.github.io/categories/github/</guid>
+      <guid>https://answerboom.github.io/categories/github/</guid>
       <description></description>
     </item>
     
     <item>
       <title>前端</title>
-      <link>answerboom.github.io/categories/%E5%89%8D%E7%AB%AF/</link>
+      <link>https://answerboom.github.io/categories/%E5%89%8D%E7%AB%AF/</link>
       <pubDate>Thu, 08 Jun 2023 19:03:00 +0800</pubDate>
       
-      <guid>answerboom.github.io/categories/%E5%89%8D%E7%AB%AF/</guid>
+      <guid>https://answerboom.github.io/categories/%E5%89%8D%E7%AB%AF/</guid>
       <description></description>
     </item>
     
     <item>
       <title>Java</title>
-      <link>answerboom.github.io/categories/java/</link>
+      <link>https://answerboom.github.io/categories/java/</link>
       <pubDate>Tue, 27 Dec 2022 17:16:20 +0800</pubDate>
       
-      <guid>answerboom.github.io/categories/java/</guid>
+      <guid>https://answerboom.github.io/categories/java/</guid>
       <description></description>
     </item>
     
     <item>
       <title>算法</title>
-      <link>answerboom.github.io/categories/%E7%AE%97%E6%B3%95/</link>
+      <link>https://answerboom.github.io/categories/%E7%AE%97%E6%B3%95/</link>
       <pubDate>Fri, 01 Oct 2021 11:37:16 +0800</pubDate>
       
-      <guid>answerboom.github.io/categories/%E7%AE%97%E6%B3%95/</guid>
+      <guid>https://answerboom.github.io/categories/%E7%AE%97%E6%B3%95/</guid>
       <description></description>
     </item>
     

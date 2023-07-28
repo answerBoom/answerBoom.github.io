@@ -14,15 +14,15 @@
 重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon&#43;\mu$将随机性转移到这个$\epsilon$常量上
 1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&#34;shape of s:&#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&#39;blue&#39;,edgecolor=&#39;white&#39;); ax.axis(&#39;off&#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)&#43;1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch.">
 <meta name="author" content="">
-<link rel="canonical" href="answerboom.github.io/articles/2023/07/27/diffusion-models-note/">
-<link crossorigin="anonymous" href="/answerboom.github.io/assets/css/stylesheet.f1ce240cfe5af969a7d47c7624c2a49eda79c4e4fd31a81b2d14d80a5fbc3546.css" integrity="" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="/answerboom.github.io/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
+<link rel="canonical" href="https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f1ce240cfe5af969a7d47c7624c2a49eda79c4e4fd31a81b2d14d80a5fbc3546.css" integrity="" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
     onload="hljs.initHighlightingOnLoad();"></script>
-<link rel="icon" href="answerboom.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="answerboom.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="answerboom.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="answerboom.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="answerboom.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="https://answerboom.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://answerboom.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://answerboom.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://answerboom.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://answerboom.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
 <noscript>
@@ -69,7 +69,7 @@
 重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon&#43;\mu$将随机性转移到这个$\epsilon$常量上
 1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&#34;shape of s:&#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&#39;blue&#39;,edgecolor=&#39;white&#39;); ax.axis(&#39;off&#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)&#43;1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="answerboom.github.io/articles/2023/07/27/diffusion-models-note/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2023-07-27T21:11:50+08:00" />
 <meta property="article:modified_time" content="2023-07-27T21:11:50+08:00" />
 
@@ -90,9 +90,9 @@
   "itemListElement": [, 
     {
       "@type": "ListItem",
-      "position":  3 ,
+      "position":  2 ,
       "name": "扩散模型",
-      "item": "answerboom.github.io/articles/2023/07/27/diffusion-models-note/"
+      "item": "https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/"
     }
   ]
 }
@@ -114,14 +114,14 @@
   "dateModified": "2023-07-27T21:11:50+08:00",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "answerboom.github.io/articles/2023/07/27/diffusion-models-note/"
+    "@id": "https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "🐻 liyBlog",
     "logo": {
       "@type": "ImageObject",
-      "url": "answerboom.github.io/favicon.ico"
+      "url": "https://answerboom.github.io/favicon.ico"
     }
   }
 }
@@ -143,7 +143,7 @@
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="answerboom.github.io" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
+            <a href="https://answerboom.github.io/" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -169,27 +169,27 @@
         </div>
         <ul id="menu">
             <li>
-                <a href="answerboom.github.io/answerboom.github.io/" title="主页">
+                <a href="https://answerboom.github.io/" title="主页">
                     <span>主页</span>
                 </a>
             </li>
             <li>
-                <a href="answerboom.github.io/answerboom.github.io/archives/" title="归档">
+                <a href="https://answerboom.github.io/archives/" title="归档">
                     <span>归档</span>
                 </a>
             </li>
             <li>
-                <a href="answerboom.github.io/answerboom.github.io/categories/" title="分类">
+                <a href="https://answerboom.github.io/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="answerboom.github.io/answerboom.github.io/tags/" title="标签">
+                <a href="https://answerboom.github.io/tags/" title="标签">
                     <span>标签</span>
                 </a>
             </li>
             <li>
-                <a href="answerboom.github.io/answerboom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
+                <a href="https://answerboom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
                     <span>查找</span>
                 </a>
             </li>
@@ -200,7 +200,7 @@
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="answerboom.github.io">Home</a></div>
+    <div class="breadcrumbs"><a href="https://answerboom.github.io/">Home</a></div>
     <h1 class="post-title">
       扩散模型
     </h1>
@@ -524,14 +524,14 @@
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="answerboom.github.io/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">扩散模型</a></li>
+      <li><a href="https://answerboom.github.io/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">扩散模型</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="answerboom.github.io">🐻 liyBlog</a></span>
+    <span>&copy; 2023 <a href="https://answerboom.github.io/">🐻 liyBlog</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &

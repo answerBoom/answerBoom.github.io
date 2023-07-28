@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>leetcode on 🐻 liyBlog</title>
-    <link>answerboom.github.io/tags/leetcode/</link>
+    <link>https://answerboom.github.io/tags/leetcode/</link>
     <description>Recent content in leetcode on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 01 Oct 2021 11:37:16 +0800</lastBuildDate><atom:link href="answerboom.github.io/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 01 Oct 2021 11:37:16 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Leetcode 重复元素</title>
-      <link>answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</link>
+      <link>https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</link>
       <pubDate>Fri, 01 Oct 2021 11:37:16 +0800</pubDate>
       
-      <guid>answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</guid>
+      <guid>https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</guid>
       <description>leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
 bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
 int temp; int i=low,j=high-1; if(low&amp;lt;high){ 发现输出结果，基准值右边的两个数不会调换次序

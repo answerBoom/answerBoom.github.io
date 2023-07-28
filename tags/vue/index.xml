@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>vue on 🐻 liyBlog</title>
-    <link>answerboom.github.io/tags/vue/</link>
+    <link>https://answerboom.github.io/tags/vue/</link>
     <description>Recent content in vue on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 21 Oct 2022 16:50:19 +0800</lastBuildDate><atom:link href="answerboom.github.io/tags/vue/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 21 Oct 2022 16:50:19 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/tags/vue/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>ElementUi图片上传</title>
-      <link>answerboom.github.io/articles/2022/10/21/elementuiimageupload/</link>
+      <link>https://answerboom.github.io/articles/2022/10/21/elementuiimageupload/</link>
       <pubDate>Fri, 21 Oct 2022 16:50:19 +0800</pubDate>
       
-      <guid>answerboom.github.io/articles/2022/10/21/elementuiimageupload/</guid>
+      <guid>https://answerboom.github.io/articles/2022/10/21/elementuiimageupload/</guid>
       <description>ruoyi实现不需要token访问静态资源 在config/SecurityConfig配置
 .antMatchers( HttpMethod.GET, &amp;#34;/&amp;#34;, &amp;#34;/*.html&amp;#34;, &amp;#34;/**/*.html&amp;#34;, &amp;#34;/**/*.css&amp;#34;, &amp;#34;/**/*.js&amp;#34;, //profile下有很多文件，只开放头像类的文件 &amp;#34;/profile/upload/**&amp;#34;, &amp;#34;/profile/**&amp;#34;, &amp;#34;/profile/avatar/**&amp;#34; &amp;ldquo;/xxx/**&amp;ldquo;让xxx路径下的全部文件访问不需要token
 在config/ResourcesConfig中增加
