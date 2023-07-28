@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>扩散模型 on 🐻 liyBlog</title>
+    <link>https://answerBoom.github.io/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/</link>
+    <description>Recent content in 扩散模型 on 🐻 liyBlog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="https://answerBoom.github.io/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>扩散模型</title>
+      <link>https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/</link>
+      <pubDate>Thu, 27 Jul 2023 21:11:50 +0800</pubDate>
+      
+      <guid>https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/</guid>
+      <description>扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
+学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
+上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
+经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\epsilon_\theta$去逼近$\epsilon_t$
+重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon+\mu$将随机性转移到这个$\epsilon$常量上
+1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&amp;#34;shape of s:&amp;#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&amp;#39;blue&amp;#39;,edgecolor=&amp;#39;white&amp;#39;); ax.axis(&amp;#39;off&amp;#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)+1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch.</description>
+    </item>
+    
+  </channel>
+</rss>

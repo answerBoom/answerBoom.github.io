@@ -1,0 +1,1171 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Blog笔记 | 🐻 liyBlog</title>
+<meta name="keywords" content="Java">
+<meta name="description" content="blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(&#34;sg_article&#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法
+@NoArgsConstructor：提供类的无参构造
+@AllArgsConstructor：提供类的全参构造
+@TableName(&quot;sg_article&quot;)：将表与数据库里的表对应起来
+@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void
+实体类中加入数据库中不存在的列名需要加入TableField注解标识
+@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）
+字段名可以用字符串也可以用方法：Article::getStatus
+推荐用方法防止列名写错
+lambdaQueryWrapper.eq(Objects.nonNull(categoryId) &amp;&amp; categoryId &gt; 0, Article::getCategoryId, categoryId);
+eq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入
+3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充">
+<meta name="author" content="">
+<link rel="canonical" href="https://answerBoom.github.io/articles/2022/12/27/blognote/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f1ce240cfe5af969a7d47c7624c2a49eda79c4e4fd31a81b2d14d80a5fbc3546.css" integrity="sha256-8c4kDP5a&#43;Wmn1Hx2JMKkntp5xOT9MagbLRTYCl&#43;8NUY=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://answerBoom.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://answerBoom.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://answerBoom.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://answerBoom.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://answerBoom.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Blog笔记" />
+<meta property="og:description" content="blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(&#34;sg_article&#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法
+@NoArgsConstructor：提供类的无参构造
+@AllArgsConstructor：提供类的全参构造
+@TableName(&quot;sg_article&quot;)：将表与数据库里的表对应起来
+@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void
+实体类中加入数据库中不存在的列名需要加入TableField注解标识
+@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）
+字段名可以用字符串也可以用方法：Article::getStatus
+推荐用方法防止列名写错
+lambdaQueryWrapper.eq(Objects.nonNull(categoryId) &amp;&amp; categoryId &gt; 0, Article::getCategoryId, categoryId);
+eq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入
+3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://answerBoom.github.io/articles/2022/12/27/blognote/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-12-27T17:16:20+08:00" />
+<meta property="article:modified_time" content="2022-12-27T17:16:20+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Blog笔记"/>
+<meta name="twitter:description" content="blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(&#34;sg_article&#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法
+@NoArgsConstructor：提供类的无参构造
+@AllArgsConstructor：提供类的全参构造
+@TableName(&quot;sg_article&quot;)：将表与数据库里的表对应起来
+@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void
+实体类中加入数据库中不存在的列名需要加入TableField注解标识
+@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）
+字段名可以用字符串也可以用方法：Article::getStatus
+推荐用方法防止列名写错
+lambdaQueryWrapper.eq(Objects.nonNull(categoryId) &amp;&amp; categoryId &gt; 0, Article::getCategoryId, categoryId);
+eq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入
+3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充"/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Blog笔记",
+      "item": "https://answerBoom.github.io/articles/2022/12/27/blognote/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Blog笔记",
+  "name": "Blog笔记",
+  "description": "blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(\u0026#34;sg_article\u0026#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法\n@NoArgsConstructor：提供类的无参构造\n@AllArgsConstructor：提供类的全参构造\n@TableName(\u0026quot;sg_article\u0026quot;)：将表与数据库里的表对应起来\n@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void\n实体类中加入数据库中不存在的列名需要加入TableField注解标识\n@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）\n字段名可以用字符串也可以用方法：Article::getStatus\n推荐用方法防止列名写错\nlambdaQueryWrapper.eq(Objects.nonNull(categoryId) \u0026amp;\u0026amp; categoryId \u0026gt; 0, Article::getCategoryId, categoryId);\neq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入\n3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充",
+  "keywords": [
+    "Java"
+  ],
+  "articleBody": "blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(\"sg_article\") @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法\n@NoArgsConstructor：提供类的无参构造\n@AllArgsConstructor：提供类的全参构造\n@TableName(\"sg_article\")：将表与数据库里的表对应起来\n@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void\n实体类中加入数据库中不存在的列名需要加入TableField注解标识\n@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）\n字段名可以用字符串也可以用方法：Article::getStatus\n推荐用方法防止列名写错\nlambdaQueryWrapper.eq(Objects.nonNull(categoryId) \u0026\u0026 categoryId \u003e 0, Article::getCategoryId, categoryId);\neq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入\n3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充\n1、在实体类的属性上加入@TableField注解，指定自动填充的策略\n2、按照框架要求编写元数据对象处理器，在此类中统一为公共字段赋值，此类需要实现MetaObjectHandler接口\n@TableField(fill=FieldFill.INSERT) private LocalDateTime createTime; @TableField(fill=FieldFill.INSERT_UPDATE) private LocalDateTime updateTime; @Component public class MyMetaObjectHandler implements MetaObjectHandler { @Override public void insertFill(MetaObject metaObject) { metaObject.setValue(\"createTime\", LocalDateTime.now()); metaObject.setValue(\"updateTime\", LocalDateTime.now()); metaObject.setValue(\"createUser\",new Long(1)); metaObject.setValue(\"updateUser\",new Long(1)); } @Override public void updateFill(MetaObject metaObject) { metaObject.setValue(\"updateTime\", LocalDateTime.now()); metaObject.setValue(\"updateUser\",new Long(1)); } } 5、@Transactional ​\t涉及多张表操作的方法需要加入@Transactional注解，并在启动类上加入@EnableTransactionManagement注解\nStrem流 1.map、filter Stream流中，map可以将一个流的元素按照一定的映射规则映射到另一个流中。\npublic static \u003cO,T\u003e List\u003cT\u003e copyBeanList(List\u003cO\u003e list,Class\u003cT\u003e clazz) { return list.stream() .map(o -\u003e copyBean(o,clazz)).collect(Collectors.toList()); } lambda是对匿名内部类的一种简写\ncategories = categories.stream().filter(new Predicate\u003cCategory\u003e() { @Override public boolean test(Category category) { return SystemConstants.STATUS_NORMAL.equals(category.getStatus()); } }).collect(Collectors.toList()); 简写后\nList\u003ccategory\u003e categories = categories.stream().filter(category -\u003e SystemConstants.STATUS_NORMAL.equals(category.getStatus())).collect(Collectors.toList()); filter过滤掉不满足表达式的元素\ncollect操作可以接受各种方法作为参数，将流中的元素汇集。\n2.演变过程 将分类表name根据categoryId赋值给Article的categoryName\n使用匿名内部类\narticles.stream().map(new Function() { @Override public Article apply(Article article) { //获取分类id，查询分类信息，获取分类名称 Category category = categoryService.getById(article.getCategoryId()); String name = category.getName(); article.setCategoryName(name); return article; } }) 使用lambda表达式\n只关注参数列表和方法体\n(Article article) { //获取分类id，查询分类信息，获取分类名称 Category category = categoryService.getById(article.getCategoryId()); String name = category.getName(); article.setCategoryName(name); return article; } 参数列表和方法体用一个箭头，如果只有一个参数则参数类型、小括号可以省略，大括号和return可以去掉\narticles.stream().map(article -\u003e Category category = categoryService.getById(article.getCategoryId()); String name = category.getName(); article.setCategoryName(name); return article; ) 简化完成后\narticles = articles.stream() .map(article -\u003e article.setCategoryName(categoryService.getById(article.getCategoryId()).getName())).collect(Collectors.toList()); Spring Security 加入依赖\n\u003cdependency\u003e \u003cgroupId\u003eorg.springframework.boot\u003c/groupId\u003e \u003cartifactId\u003espring-boot-starter-security\u003c/artifactId\u003e \u003c/dependency\u003e \u003cdependency\u003e \u003cgroupId\u003eorg.springframework.boot\u003c/groupId\u003e \u003cartifactId\u003espring-boot-starter-data-redis\u003c/artifactId\u003e \u003c/dependency\u003e \u003cdependency\u003e \u003cgroupId\u003ecom.alibaba\u003c/groupId\u003e \u003cartifactId\u003efastjson\u003c/artifactId\u003e \u003c/dependency\u003e \u003cdependency\u003e \u003cgroupId\u003eio.jsonwebtoken\u003c/groupId\u003e \u003cartifactId\u003ejjwt\u003c/artifactId\u003e \u003c/dependency\u003e 加入工具类和配置\n登录 ​\t①自定义登录接口\n​\t调用ProviderManager的方法进行认证 如果认证通过生成jwt\n​\t把用户信息存入redis中\n​\t②自定义UserDetailsService\n​\t在这个实现类中去查询数据库\n​\t注意配置passwordEncoder为BCryptPasswordEncoder\n将authenticationManager注入容器\n@Autowired private AuthenticationManager authenticationManager; 此时还容器中还没有authenticationManager，需要在配置类中配置\n@Configuration public class SecurityConfig extends WebSecurityConfigurerAdapter { /** *该方法会返回一个AuthenticationManager的对象 *通过bean注解注入容器 */ @Bean @Override public AuthenticationManager authenticationManagerBean() throws Exception { return super.authenticationManagerBean(); } } 调用authenticationManager的authenticate的方法，但是authenticate会调用UserDetailsService的自带方法（需要重写）去访问内存，实际需求需要去访问数据库\n@Service public class UserDetailsServiceImpl implements UserDetailsService { @Autowired private UserMapper userMapper; @Override public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException { //根据用户名查询用户信息 LambdaQueryWrapper\u003cUser\u003e lambdaQueryWrapper = new LambdaQueryWrapper(); lambdaQueryWrapper.eq(User::getUserName, username); User user = userMapper.selectOne(lambdaQueryWrapper); //判断是否查到用户，如果没查到抛出异常 if (Objects.isNull(user)) { throw new RuntimeException(\"用户不存在\"); } //返回用户信息 //TODO 查询权限信息封装 //LoginUser是UserDetails的实现类 return new LoginUser(user); } } 通过service注解注入容器可以实现替换原来的方法实现校验\n调用完authenticate会返回authenticate对象，继续实现login的方法\n@Service public class BlogLoginServiceImpl implements BlogLoginService { @Autowired private AuthenticationManager authenticationManager; @Autowired private RedisCache redisCache; @Override public ResponseResult login(User user) { UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(user.getUserName(), user.getPassword()); Authentication authenticate = authenticationManager.authenticate(usernamePasswordAuthenticationToken); //判断是否认证通过 if (Objects.isNull(authenticate)) { throw new RuntimeException(\"用户名或密码错误\"); } //获取userid生成token //getPrincipal是获取authenticate的主体，里面封装了之前传入的loginUser LoginUser loginUser = (LoginUser) authenticate.getPrincipal(); String userId = loginUser.getUser().getId().toString(); //将userid加密成jwt String jwt = JwtUtil.createJWT(userId); //把用户信息存入redis redisCache.setCacheObject(\"bolglogin:\"+userId,loginUser); //把token和userinfo封装返回 //把User转换成UserInfoVo UserInfoVo userInfoVo = BeanCopyUtils.copyBean(loginUser.getUser(), UserInfoVo.class); BlogUserLoginVo vo = new BlogUserLoginVo(jwt,userInfoVo); return ResponseResult.okResult(vo); } } 配置security配置类\n@Override protected void configure(HttpSecurity http) throws Exception { http //关闭csrf .csrf().disable() //不通过Session获取SecurityContext .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) .and() .authorizeRequests() // 对于登录接口 允许匿名访问 .antMatchers(\"/login\").anonymous() //jwt过滤器测试用，如果测试没有问题吧这里删除了 .antMatchers(\"/link/getAllLink\").authenticated() // 除上面外的所有请求全部不需要认证即可访问 .anyRequest().permitAll(); http.logout().disable(); //允许跨域 http.cors(); } @Bean public PasswordEncoder passwordEncoder(){ return new BCryptPasswordEncoder(); } 登陆校验过滤器 ​\t①定义Jwt认证过滤器\n​\t获取token\n​\t解析token获取其中的userid\n​\t从redis中获取用户信息\n​\t存入SecurityContextHolder\n配置过滤器 @Component public class JwtAuthenticationTokenFilter extends OncePerRequestFilter { @Autowired private RedisCache redisCache; @Override protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException { //获取请求头中的token String token = httpServletRequest.getHeader(\"token\"); if (!StringUtils.hasText(token)) { filterChain.doFilter(httpServletRequest, httpServletResponse); return; } //解析获取userid Claims claims = null; try { claims = JwtUtil.parseJWT(token); } catch (Exception e) { e.printStackTrace(); //token超时，token非法 //响应告诉前端需要重新登陆 ResponseResult responseResult = ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN); WebUtils.renderString(httpServletResponse, JSON.toJSONString(responseResult)); return; } String userId = claims.getSubject(); //从redis中获取用户信息 LoginUser loginUser = redisCache.getCacheObject(\"bloglogin:\" + userId); if (Objects.isNull(loginUser)) { //响应告诉前端需要重新登陆 ResponseResult responseResult = ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN); WebUtils.renderString(httpServletResponse, JSON.toJSONString(responseResult)); return; } //存入SecurityContextHolder UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUser, null, null); SecurityContextHolder.getContext().setAuthentication(authenticationToken); filterChain.doFilter(httpServletRequest,httpServletResponse); } } security配置 ​\t由于重写了configure方法，UsernamepasswordAuthenticationFilter并没有加入到过滤器链中，这里addFilterBefore意思是替换UsernamepasswordAuthenticationFilter原来的位置\n@Autowired private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter; @Override protected void configure(HttpSecurity http) throws Exception { //把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中 http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class); } 认证失败处理 ​\t目前我们的项目在认证出错或者权限不足的时候响应回来的Json是Security的异常处理结果。但是这个响应的格式肯定是不符合我们项目的接口规范的。所以需要自定义异常处理。\n​\tAuthenticationEntryPoint 认证失败处理器\n​\tAccessDeniedHandler 授权失败处理器\nAccessDeniedHandlerImpl实现AccessDeniedHandler接口\n@Component public class AccessDeniedHandlerImpl implements AccessDeniedHandler { @Override public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException e) throws IOException, ServletException { e.printStackTrace(); ResponseResult responseResult = ResponseResult.errorResult(AppHttpCodeEnum.NO_OPERATOR_AUTH); //响应给前端 WebUtils.renderString(response, JSON.toJSONString(responseResult)); } } AuthenticationEntryPointImpl实现AuthenticationEntryPoint接口\n@Component public class AuthenticationEntryPointImpl implements AuthenticationEntryPoint { @Override public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException e) throws IOException, ServletException { e.printStackTrace(); ResponseResult responseResult = null; //根据错误类型返回数据 if (e instanceof BadCredentialsException) { responseResult = ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR.getCode(),e.getMessage()); } else if (e instanceof InsufficientAuthenticationException) { responseResult = ResponseResult.errorResult(AppHttpCodeEnum.NEED_LOGIN); } else { responseResult = ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR.getCode(),\"认证或授权失败\"); } //响应给前端 WebUtils.renderString(response, JSON.toJSONString(responseResult)); } } 自定义全局异常 自定义一个异常类SystemException public class SystemException extends RuntimeException{ private int code; private String msg; public int getCode() { return code; } public String getMsg() { return msg; } public SystemException(AppHttpCodeEnum httpCodeEnum) { super(httpCodeEnum.getMsg()); this.code = httpCodeEnum.getCode(); this.msg = httpCodeEnum.getMsg(); } } 写一个handler处理抛出的异常 @RestControllerAdvice @Slf4j public class GlobalExceptionHandler { @ExceptionHandler(SystemException.class) public ResponseResult systemExceptionHandler(SystemException e) { //打印异常信息 log.error(\"出现了异常！{}\",e); //从异常对象中获取提示信息封装返回 return ResponseResult.errorResult(e.getCode(), e.getMsg()); } /** *定义一个handler处理其他异常 */ @ExceptionHandler(Exception.class) public ResponseResult ExceptionHandler(Exception e) { //打印异常信息 log.error(\"出现了异常！{}\",e); //从异常对象中获取提示信息封装返回 return ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR); } } @Slf4j：打印日志信息的注解，注解后可以通过log.error打印错误\n关闭8080端口 netstat -o -n -a | findstr :8080 taskkill /F /PID 3116\n异常处理器 自定义全局异常 用来捕获抛出的异常，其中业务异常处理器需要自定义业务异常\n/* 全局异常处理 */ @ControllerAdvice(annotations = {RestController.class, Controller.class}) @ResponseBody @Slf4j public class GlobalExceptionHandler { /** * 异常处理方法 * * @return */ @ExceptionHandler(SQLIntegrityConstraintViolationException.class) public R\u003cString\u003e exceptionHandler(SQLIntegrityConstraintViolationException ex) { log.error(ex.getMessage()); if (ex.getMessage().contains(\"Duplicate entry\")) { String[] split = ex.getMessage().split(\" \"); String msg = split[2] + \"已存在\"; return R.error(msg); } return R.error(\"未知错误\"); } /** * 业务异常处理方法 * * @return */ @ExceptionHandler(CustomExpection.class) public R\u003cString\u003e exceptionHandler(CustomExpection ex) { log.error(ex.getMessage()); return R.error(ex.getMessage()); } } public class CustomExpection extends RuntimeException { public CustomExpection(String message) { super(message); } } 使用时需要抛出异常\nthrow new CustomExpection(\"当前分类下关联了套餐，不能删除\"); 使用过滤器完成登录校验 @Slf4j @WebFilter(filterName = \"loginCheckFilter\",urlPatterns =\"/*\") public class LoginCheckFilter implements Filter { //路径匹配器，支持通配符 public static final AntPathMatcher PATH_MATCHER = new AntPathMatcher(); @Override public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException { HttpServletRequest request = (HttpServletRequest) servletRequest; HttpServletResponse response = (HttpServletResponse) servletResponse; //1、获取本次请求的URl String requestURl = request.getRequestURI(); log.info(\"拦截到请求：{}\", request.getRequestURI()); String[] urls = new String[]{ \"/employee/login\", \"/emplyee/logout\", \"/backend/**\", \"/front/**\" }; //2、判断本次请求是否需要处理 boolean check = check(urls, requestURl); //3、如果不需要处理直接放行 if (check) { log.info(\"本次请求{}不需要处理\", requestURl); filterChain.doFilter(request, response); return; } //4、判断登录状态，如果已登录，直接放行 if (request.getSession().getAttribute(\"employee\") != null) { Long empId=(Long) request.getSession().getAttribute(\"employee\"); BaseContext.setCurrentId(empId); filterChain.doFilter(request, response); return; } //5、如果未登录则返回未登录结果，通过输出流方式向客户端页面响应数据 response.getWriter().write(JSON.toJSONString(R.error(\"NOTLOGIN\"))); return; } public boolean check(String[] urls, String requestURl) { for (String url : urls) { boolean match = PATH_MATCHER.match(url, requestURl); if (match) { return true; } } return false; } } 其他 消息转换器 前端js文件对于Long型数据会产生精度丢失。解决方法使用对象映射器\nimport com.fasterxml.jackson.databind.DeserializationFeature; import com.fasterxml.jackson.databind.ObjectMapper; import com.fasterxml.jackson.databind.module.SimpleModule; import com.fasterxml.jackson.databind.ser.std.ToStringSerializer; import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer; import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer; import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer; import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer; import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer; import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer; import java.math.BigInteger; import java.time.LocalDate; import java.time.LocalDateTime; import java.time.LocalTime; import java.time.format.DateTimeFormatter; import static com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES; /** * 对象映射器:基于jackson将Java对象转为json，或者将json转为Java对象 * 将JSON解析为Java对象的过程称为 [从JSON反序列化Java对象] * 从Java对象生成JSON的过程称为 [序列化Java对象到JSON] */ public class JacksonObjectMapper extends ObjectMapper { public static final String DEFAULT_DATE_FORMAT = \"yyyy-MM-dd\"; public static final String DEFAULT_DATE_TIME_FORMAT = \"yyyy-MM-dd HH:mm:ss\"; public static final String DEFAULT_TIME_FORMAT = \"HH:mm:ss\"; public JacksonObjectMapper() { super(); //收到未知属性时不报异常 this.configure(FAIL_ON_UNKNOWN_PROPERTIES, false); //反序列化时，属性不存在的兼容处理 this.getDeserializationConfig().withoutFeatures(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES); SimpleModule simpleModule = new SimpleModule() .addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT))) .addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT))) .addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT))) .addSerializer(BigInteger.class, ToStringSerializer.instance) .addSerializer(Long.class, ToStringSerializer.instance) .addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_FORMAT))) .addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT))) .addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeFormatter.ofPattern(DEFAULT_TIME_FORMAT))); //注册功能模块 例如，可以添加自定义序列化器和反序列化器 this.registerModule(simpleModule); } } 并在WebConfig中配置\n@Configuration public class WebConfig extends WebMvcConfigurationSupport { /** *设置静态资源映射 */ @Override protected void addResourceHandlers(ResourceHandlerRegistry registry) { registry.addResourceHandler(\"/backend/**\").addResourceLocations(\"classpath:/backend/\"); registry.addResourceHandler(\"/front/**\").addResourceLocations(\"/classpath:/front\"); } @Override protected void extendMessageConverters(List\u003cHttpMessageConverter\u003c?\u003e\u003e converters) { //创建消息转化器对象 MappingJackson2HttpMessageConverter messageConverter = new MappingJackson2HttpMessageConverter(); //设置对象转换器，底层使用Jackson将对象转换为json messageConverter.setObjectMapper(new JacksonObjectMapper()); //将上面的消息转换器对象追加到mvc框架的转换器集合中 converters.add(0, messageConverter); } } ThreadLocal ThreadLoacal并不是一个Thread，而是Thread的局部变量。当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的的线程提供独立的变量副本，所以每一个线程都可以独立的改变自己的副本，而不会影响其他线程所对应的副本。ThreadLocal为每个线程提供单独一份存储空间，具有线程隔离的效果，只有在线程内才能获取相应的值，线程外则不能访问\nThreadLocal常用方法\npublic void set(T value) //设置当前线程的线程局部变量的值 public T get() //返回当前线程所对应的线程局部变量的值 例：\npublic class BaseContext { private static ThreadLocal\u003cLong\u003e threadLocal = new ThreadLocal\u003c\u003e(); public static void setCurrentId(Long id) { threadLocal.set(id); } public static Long getCurrentId() { return threadLocal.get(); } } 静态资源映射 由于只能访问static文件下的静态资源，当需要访问其他文件夹下的静态资源需要在WebConfig里设置静态资源映射\n@Configuration public class WebConfig extends WebMvcConfigurationSupport { /** *设置静态资源映射 */ @Override protected void addResourceHandlers(ResourceHandlerRegistry registry) { registry.addResourceHandler(\"/backend/**\").addResourceLocations(\"classpath:/backend/\"); registry.addResourceHandler(\"/front/**\").addResourceLocations(\"/classpath:/front\"); } } Spring Cache @EnableCaching ：开启缓存注解功能\n在controller方法上加入以下注解：\n@Cacheable：在方法执行之前spring先查看缓存中是否有数据，如果有数据则直接返回数据；若没有数据，调用方法并将返回值放到缓存中(value=\"?\",key=\"#result.?\",unless=“result==null”)，unless满足条件不缓存\n@CachePut：将方法的返回值放到缓存中(value=\"?\",key=\"#result.?\"),value是指缓存的名称，key是缓存的键\n@CacheEvict：将一条或多条数据从缓存中删除(value=\"?\",key=\"#root.args[0]\" or “#id”)，allEntries = true删除这个分类下所有的缓存数据\n在启动类上使用@EnableCaching开启缓存支持\n使用redis作为缓存技术，只需要导入Spring data Redis 的maven坐标:\norg.springframework.boot spring-boot-starter-data-redis org.springframework.boot spring-boot-starter-cache 配置redis=》application.yml\nspring: cache: redis: time-to-live:1800000#设置缓存有效期ms @Autowired private CacheManager cacheManaget swagger 1、导入依赖\ncom.github.xiaoymin knife4j-spring-boot-starter 3.0.2 2、导入knife4j相关配置（WebMvcConfig）\n@EnableSwagger2\n@EnableKnife4j\n@Bean public Docket createRestApi() { //文档类型 return new Docket(DocumentationType.SWAGGER_2) .apiInfo(apiInfo()) .select() .apis(RequestHandlerSelectors.basePackage(\"com.itheima.reggie.controller\")) .paths(PathSelectors.any()) .build(); } private ApiInfo apiInfo() { return new ApiInfoBuilder() .title(\"瑞吉外卖\") .version(\"1.0\") .description(\"瑞吉外卖接口文档\") .build(); } 3、设置静态资源映射\nregistry.addResourceHandler(\"doc.html\").addResourceLocations(\"classpath:/META-INF/resources/\"); registry.addResourceHandler(\"/webjars/**\").addResourceLocations(\"classpath:/META-INF/resources/webjars/\"); 4、过滤器中设置不需要处理的请求路径\nString[] urls = new String[]{ \"/employee/login\", \"/employee/logout\", \"/backend/**\", \"/front/**\", \"/common/**\", \"/user/sendMsg\", \"/user/login\", \"/doc.html\", \"/webjars/**\", \"/swagger-resources\", \"/v2/api-docs\" }; swaggerApi ",
+  "wordCount" : "1293",
+  "inLanguage": "en",
+  "datePublished": "2022-12-27T17:16:20+08:00",
+  "dateModified": "2022-12-27T17:16:20+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://answerBoom.github.io/articles/2022/12/27/blognote/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "🐻 liyBlog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://answerBoom.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://answerBoom.github.io" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://answerBoom.github.io/" title="主页">
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
+                    <span>查找</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://answerBoom.github.io">Home</a></div>
+    <h1 class="post-title">
+      Blog笔记
+    </h1>
+    <div class="post-meta"><span title='2022-12-27 17:16:20 +0800 CST'>December 27, 2022</span>&nbsp;·&nbsp;7 min
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#blog%e9%a1%b9%e7%9b%ae%e7%ac%94%e8%ae%b0" aria-label="blog项目笔记">blog项目笔记</a><ul>
+                        
+                <li>
+                    <a href="#mybatis-plus" aria-label="mybatis plus">mybatis plus</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#1-%e7%b1%bb%e6%b3%a8%e8%a7%a3" aria-label="1. 类注解">1. 类注解</a></li>
+                <li>
+                    <a href="#2-mybatis-plus%e4%b8%adwapper%e6%96%b9%e6%b3%95" aria-label="2. mybatis plus中wapper方法">2. mybatis plus中wapper方法</a></li>
+                <li>
+                    <a href="#3-%e4%bd%bf%e7%94%a8page%e5%88%86%e9%a1%b5%e9%9c%80%e8%a6%81%e9%85%8d%e7%bd%ae%e5%88%86%e9%a1%b5%e6%8f%92%e4%bb%b6%e5%9c%a8config%e5%8c%85%e4%b8%8b%e5%8a%a0%e5%85%a5%e4%bb%a5%e4%b8%8b%e7%b1%bb" aria-label="3. 使用page分页需要配置分页插件，在config包下加入以下类">3. 使用page分页需要配置分页插件，在config包下加入以下类</a></li>
+                <li>
+                    <a href="#4%e5%85%ac%e5%85%b1%e5%ad%97%e6%ae%b5%e5%a1%ab%e5%85%85" aria-label="4、公共字段填充">4、公共字段填充</a></li>
+                <li>
+                    <a href="#5transactional" aria-label="5、@Transactional">5、@Transactional</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#strem%e6%b5%81" aria-label="Strem流">Strem流</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#1mapfilter" aria-label="1.map、filter">1.map、filter</a></li>
+                <li>
+                    <a href="#2%e6%bc%94%e5%8f%98%e8%bf%87%e7%a8%8b" aria-label="2.演变过程">2.演变过程</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#spring-security" aria-label="Spring Security">Spring Security</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e7%99%bb%e5%bd%95" aria-label="登录">登录</a></li>
+                <li>
+                    <a href="#%e7%99%bb%e9%99%86%e6%a0%a1%e9%aa%8c%e8%bf%87%e6%bb%a4%e5%99%a8" aria-label="登陆校验过滤器">登陆校验过滤器</a></li>
+                <li>
+                    <a href="#%e8%ae%a4%e8%af%81%e5%a4%b1%e8%b4%a5%e5%a4%84%e7%90%86" aria-label="认证失败处理">认证失败处理</a></li>
+                <li>
+                    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%85%a8%e5%b1%80%e5%bc%82%e5%b8%b8" aria-label="自定义全局异常">自定义全局异常</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#%e5%85%b3%e9%97%ad8080%e7%ab%af%e5%8f%a3" aria-label="关闭8080端口">关闭8080端口</a></li>
+                <li>
+                    <a href="#%e5%bc%82%e5%b8%b8%e5%a4%84%e7%90%86%e5%99%a8" aria-label="异常处理器">异常处理器</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%85%a8%e5%b1%80%e5%bc%82%e5%b8%b8-1" aria-label="自定义全局异常">自定义全局异常</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#%e4%bd%bf%e7%94%a8%e8%bf%87%e6%bb%a4%e5%99%a8%e5%ae%8c%e6%88%90%e7%99%bb%e5%bd%95%e6%a0%a1%e9%aa%8c" aria-label="使用过滤器完成登录校验">使用过滤器完成登录校验</a></li>
+                <li>
+                    <a href="#%e5%85%b6%e4%bb%96" aria-label="其他">其他</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#%e6%b6%88%e6%81%af%e8%bd%ac%e6%8d%a2%e5%99%a8" aria-label="消息转换器">消息转换器</a></li>
+                <li>
+                    <a href="#threadlocal" aria-label="ThreadLocal">ThreadLocal</a></li>
+                <li>
+                    <a href="#%e9%9d%99%e6%80%81%e8%b5%84%e6%ba%90%e6%98%a0%e5%b0%84" aria-label="静态资源映射">静态资源映射</a></li></ul>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#spring-cache" aria-label="Spring Cache">Spring Cache</a></li>
+                <li>
+                    <a href="#swagger" aria-label="swagger">swagger</a><ul>
+                        <ul>
+                        
+                <li>
+                    <a href="#swaggerapi" aria-label="swaggerApi">swaggerApi</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="blog项目笔记">blog项目笔记<a hidden class="anchor" aria-hidden="true" href="#blog项目笔记">#</a></h1>
+<h2 id="mybatis-plus">mybatis plus<a hidden class="anchor" aria-hidden="true" href="#mybatis-plus">#</a></h2>
+<h4 id="1-类注解">1. 类注解<a hidden class="anchor" aria-hidden="true" href="#1-类注解">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Data</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@NoArgsConstructor</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@AllArgsConstructor</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@TableName</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;sg_article&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Accessors</span><span style="color:#f92672">(</span>chain <span style="color:#f92672">=</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">Article</span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>@Data</code>：注在类上，提供类的get、set、equals、hashCode、toString方法</p>
+<p><code>@NoArgsConstructor</code>：提供类的无参构造</p>
+<p><code>@AllArgsConstructor</code>：提供类的全参构造</p>
+<p><code>@TableName(&quot;sg_article&quot;)</code>：将表与数据库里的表对应起来</p>
+<p><code>@Accessors(chain = true)</code>：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void</p>
+<p>实体类中加入数据库中不存在的列名需要加入TableField注解标识</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#a6e22e">@TableField</span><span style="color:#f92672">(</span>exist <span style="color:#f92672">=</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String categoryName<span style="color:#f92672">;</span>
+</span></span></code></pre></div><h4 id="2-mybatis-plus中wapper方法">2. mybatis plus中wapper方法<a hidden class="anchor" aria-hidden="true" href="#2-mybatis-plus中wapper方法">#</a></h4>
+<p><code>queryWapper.eq（字段名，val）</code></p>
+<p>字段名可以用字符串也可以用方法：Article::getStatus</p>
+<p>推荐用方法防止列名写错</p>
+<p><code>lambdaQueryWrapper.eq(Objects.nonNull(categoryId) &amp;&amp; categoryId &gt; 0, Article::getCategoryId, categoryId);</code></p>
+<p>eq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入</p>
+<h4 id="3-使用page分页需要配置分页插件在config包下加入以下类">3. 使用page分页需要配置分页插件，在config包下加入以下类<a hidden class="anchor" aria-hidden="true" href="#3-使用page分页需要配置分页插件在config包下加入以下类">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MbatisPlusConfig</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 3.4.0之后版本
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> MybatisPlusInterceptor <span style="color:#a6e22e">mybatisPlusInterceptor</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        MybatisPlusInterceptor mybatisPlusInterceptor <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MybatisPlusInterceptor<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        mybatisPlusInterceptor<span style="color:#f92672">.</span><span style="color:#a6e22e">addInnerInterceptor</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> PaginationInnerInterceptor<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> mybatisPlusInterceptor<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="4公共字段填充">4、公共字段填充<a hidden class="anchor" aria-hidden="true" href="#4公共字段填充">#</a></h4>
+<p>插入时间、更新时间的自动填充</p>
+<p>1、在实体类的属性上加入@TableField注解，指定自动填充的策略</p>
+<p>2、按照框架要求编写元数据对象处理器，在此类中统一为公共字段赋值，此类需要实现MetaObjectHandler接口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@TableField</span><span style="color:#f92672">(</span>fill<span style="color:#f92672">=</span>FieldFill<span style="color:#f92672">.</span><span style="color:#a6e22e">INSERT</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> LocalDateTime createTime<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@TableField</span><span style="color:#f92672">(</span>fill<span style="color:#f92672">=</span>FieldFill<span style="color:#f92672">.</span><span style="color:#a6e22e">INSERT_UPDATE</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> LocalDateTime updateTime<span style="color:#f92672">;</span>
+</span></span></code></pre></div><pre tabindex="0"><code class="language-jav" data-lang="jav">@Component
+public class MyMetaObjectHandler implements MetaObjectHandler {
+    @Override
+    public void insertFill(MetaObject metaObject) {
+        metaObject.setValue(&#34;createTime&#34;, LocalDateTime.now());
+        metaObject.setValue(&#34;updateTime&#34;, LocalDateTime.now());
+        metaObject.setValue(&#34;createUser&#34;,new Long(1));
+        metaObject.setValue(&#34;updateUser&#34;,new Long(1));
+    }
+
+    @Override
+    public void updateFill(MetaObject metaObject) {
+        metaObject.setValue(&#34;updateTime&#34;, LocalDateTime.now());
+        metaObject.setValue(&#34;updateUser&#34;,new Long(1));
+    }
+}
+</code></pre><h4 id="5transactional">5、@Transactional<a hidden class="anchor" aria-hidden="true" href="#5transactional">#</a></h4>
+<p>​	涉及多张表操作的方法需要加入@Transactional注解，并在启动类上加入@EnableTransactionManagement注解</p>
+<h2 id="strem流">Strem流<a hidden class="anchor" aria-hidden="true" href="#strem流">#</a></h2>
+<h4 id="1mapfilter">1.map、filter<a hidden class="anchor" aria-hidden="true" href="#1mapfilter">#</a></h4>
+<p>Stream流中，map可以将一个流的元素按照一定的映射规则映射到另一个流中。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#f92672">&lt;</span>O<span style="color:#f92672">,</span>T<span style="color:#f92672">&gt;</span> List<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">copyBeanList</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>O<span style="color:#f92672">&gt;</span> list<span style="color:#f92672">,</span>Class<span style="color:#f92672">&lt;</span>T<span style="color:#f92672">&gt;</span> clazz<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> list<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>o <span style="color:#f92672">-&gt;</span> copyBean<span style="color:#f92672">(</span>o<span style="color:#f92672">,</span>clazz<span style="color:#f92672">)).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>lambda是对匿名内部类的一种简写</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>categories <span style="color:#f92672">=</span> categories<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> Predicate<span style="color:#f92672">&lt;</span>Category<span style="color:#f92672">&gt;()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">test</span><span style="color:#f92672">(</span>Category category<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> SystemConstants<span style="color:#f92672">.</span><span style="color:#a6e22e">STATUS_NORMAL</span><span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>category<span style="color:#f92672">.</span><span style="color:#a6e22e">getStatus</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span></code></pre></div><p>简写后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>List<span style="color:#f92672">&lt;</span>category<span style="color:#f92672">&gt;</span> categories <span style="color:#f92672">=</span> categories<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">filter</span><span style="color:#f92672">(</span>category <span style="color:#f92672">-&gt;</span> 		     SystemConstants<span style="color:#f92672">.</span><span style="color:#a6e22e">STATUS_NORMAL</span><span style="color:#f92672">.</span><span style="color:#a6e22e">equals</span><span style="color:#f92672">(</span>category<span style="color:#f92672">.</span><span style="color:#a6e22e">getStatus</span><span style="color:#f92672">())).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span></code></pre></div><p>filter过滤掉不满足表达式的元素</p>
+<p>collect操作可以接受各种方法作为参数，将流中的元素汇集。</p>
+<h4 id="2演变过程">2.演变过程<a hidden class="anchor" aria-hidden="true" href="#2演变过程">#</a></h4>
+<p>将分类表name根据categoryId赋值给Article的categoryName</p>
+<p>使用匿名内部类</p>
+<pre tabindex="0"><code class="language-jav" data-lang="jav">        articles.stream().map(new Function&lt;Article, Article&gt;() {
+            @Override
+            public Article apply(Article article) {
+                //获取分类id，查询分类信息，获取分类名称
+                Category category = categoryService.getById(article.getCategoryId());
+                String name = category.getName();
+                article.setCategoryName(name);
+                return article;
+            }
+        })
+</code></pre><p>使用lambda表达式</p>
+<ol>
+<li>
+<p>只关注参数列表和方法体</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">(</span>Article article<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//获取分类id，查询分类信息，获取分类名称
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                Category category <span style="color:#f92672">=</span> categoryService<span style="color:#f92672">.</span><span style="color:#a6e22e">getById</span><span style="color:#f92672">(</span>article<span style="color:#f92672">.</span><span style="color:#a6e22e">getCategoryId</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>                String name <span style="color:#f92672">=</span> category<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                article<span style="color:#f92672">.</span><span style="color:#a6e22e">setCategoryName</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> article<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>参数列表和方法体用一个箭头，如果只有一个参数则参数类型、小括号可以省略，大括号和return可以去掉</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>        articles<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">().</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>article <span style="color:#f92672">-&gt;</span>
+</span></span><span style="display:flex;"><span>                Category category <span style="color:#f92672">=</span> categoryService<span style="color:#f92672">.</span><span style="color:#a6e22e">getById</span><span style="color:#f92672">(</span>article<span style="color:#f92672">.</span><span style="color:#a6e22e">getCategoryId</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>                String name <span style="color:#f92672">=</span> category<span style="color:#f92672">.</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>                article<span style="color:#f92672">.</span><span style="color:#a6e22e">setCategoryName</span><span style="color:#f92672">(</span>name<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> article<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">)</span>
+</span></span></code></pre></div></li>
+<li>
+<p>简化完成后</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>articles <span style="color:#f92672">=</span> articles<span style="color:#f92672">.</span><span style="color:#a6e22e">stream</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">map</span><span style="color:#f92672">(</span>article <span style="color:#f92672">-&gt;</span> article<span style="color:#f92672">.</span><span style="color:#a6e22e">setCategoryName</span><span style="color:#f92672">(</span>categoryService<span style="color:#f92672">.</span><span style="color:#a6e22e">getById</span><span style="color:#f92672">(</span>article<span style="color:#f92672">.</span><span style="color:#a6e22e">getCategoryId</span><span style="color:#f92672">()).</span><span style="color:#a6e22e">getName</span><span style="color:#f92672">())).</span><span style="color:#a6e22e">collect</span><span style="color:#f92672">(</span>Collectors<span style="color:#f92672">.</span><span style="color:#a6e22e">toList</span><span style="color:#f92672">());</span>
+</span></span></code></pre></div></li>
+</ol>
+<h2 id="spring-security">Spring Security<a hidden class="anchor" aria-hidden="true" href="#spring-security">#</a></h2>
+<ol>
+<li>
+<p>加入依赖</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> <span style="color:#f92672">&lt;!--</span>SpringSecurity<span style="color:#960050;background-color:#1e0010">启动器</span><span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;/</span>groupId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>security<span style="color:#f92672">&lt;/</span>artifactId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;!--</span>redis<span style="color:#960050;background-color:#1e0010">依赖</span><span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>org<span style="color:#f92672">.</span><span style="color:#a6e22e">springframework</span><span style="color:#f92672">.</span><span style="color:#a6e22e">boot</span><span style="color:#f92672">&lt;/</span>groupId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>spring<span style="color:#f92672">-</span>boot<span style="color:#f92672">-</span>starter<span style="color:#f92672">-</span>data<span style="color:#f92672">-</span>redis<span style="color:#f92672">&lt;/</span>artifactId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;!--</span>fastjson<span style="color:#960050;background-color:#1e0010">依赖</span><span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>com<span style="color:#f92672">.</span><span style="color:#a6e22e">alibaba</span><span style="color:#f92672">&lt;/</span>groupId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>fastjson<span style="color:#f92672">&lt;/</span>artifactId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;!--</span>jwt<span style="color:#960050;background-color:#1e0010">依赖</span><span style="color:#f92672">--&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>groupId<span style="color:#f92672">&gt;</span>io<span style="color:#f92672">.</span><span style="color:#a6e22e">jsonwebtoken</span><span style="color:#f92672">&lt;/</span>groupId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">&lt;</span>artifactId<span style="color:#f92672">&gt;</span>jjwt<span style="color:#f92672">&lt;/</span>artifactId<span style="color:#f92672">&gt;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">&lt;/</span>dependency<span style="color:#f92672">&gt;</span>
+</span></span></code></pre></div></li>
+<li>
+<p>加入工具类和配置</p>
+</li>
+</ol>
+<h4 id="登录">登录<a hidden class="anchor" aria-hidden="true" href="#登录">#</a></h4>
+<p><img loading="lazy" src="/img/blog%e7%ac%94%e8%ae%b0/securityMethod.png" alt="security流程"  />
+</p>
+<blockquote>
+<p>​	①自定义登录接口</p>
+<p>​				调用ProviderManager的方法进行认证 如果认证通过生成jwt</p>
+<p>​				把用户信息存入redis中</p>
+<p>​	②自定义UserDetailsService</p>
+<p>​				在这个实现类中去查询数据库</p>
+<p>​	注意配置passwordEncoder为BCryptPasswordEncoder</p>
+</blockquote>
+<ol start="3">
+<li>
+<p>将authenticationManager注入容器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> AuthenticationManager authenticationManager<span style="color:#f92672">;</span>
+</span></span></code></pre></div><p>此时还容器中还没有authenticationManager，需要在配置类中配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SecurityConfig</span> <span style="color:#66d9ef">extends</span> WebSecurityConfigurerAdapter <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*该方法会返回一个AuthenticationManager的对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*通过bean注解注入容器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> AuthenticationManager <span style="color:#a6e22e">authenticationManagerBean</span><span style="color:#f92672">()</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">super</span><span style="color:#f92672">.</span><span style="color:#a6e22e">authenticationManagerBean</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>调用authenticationManager的authenticate的方法，但是authenticate会调用UserDetailsService的自带方法（需要重写）去访问内存，实际需求需要去访问数据库</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">UserDetailsServiceImpl</span> <span style="color:#66d9ef">implements</span> UserDetailsService <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> UserMapper userMapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> UserDetails <span style="color:#a6e22e">loadUserByUsername</span><span style="color:#f92672">(</span>String username<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> UsernameNotFoundException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//根据用户名查询用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        LambdaQueryWrapper<span style="color:#f92672">&lt;</span>User<span style="color:#f92672">&gt;</span> lambdaQueryWrapper <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> LambdaQueryWrapper<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        lambdaQueryWrapper<span style="color:#f92672">.</span><span style="color:#a6e22e">eq</span><span style="color:#f92672">(</span>User<span style="color:#f92672">::</span>getUserName<span style="color:#f92672">,</span> username<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        User user <span style="color:#f92672">=</span> userMapper<span style="color:#f92672">.</span><span style="color:#a6e22e">selectOne</span><span style="color:#f92672">(</span>lambdaQueryWrapper<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//判断是否查到用户，如果没查到抛出异常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">isNull</span><span style="color:#f92672">(</span>user<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;用户不存在&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//返回用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//TODO 查询权限信息封装
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//LoginUser是UserDetails的实现类
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> LoginUser<span style="color:#f92672">(</span>user<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>通过service注解注入容器可以实现替换原来的方法实现校验</p>
+</li>
+<li>
+<p>调用完authenticate会返回authenticate对象，继续实现login的方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Service</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BlogLoginServiceImpl</span> <span style="color:#66d9ef">implements</span> BlogLoginService <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> AuthenticationManager authenticationManager<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> RedisCache redisCache<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ResponseResult <span style="color:#a6e22e">login</span><span style="color:#f92672">(</span>User user<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> UsernamePasswordAuthenticationToken<span style="color:#f92672">(</span>user<span style="color:#f92672">.</span><span style="color:#a6e22e">getUserName</span><span style="color:#f92672">(),</span> user<span style="color:#f92672">.</span><span style="color:#a6e22e">getPassword</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        Authentication authenticate <span style="color:#f92672">=</span> authenticationManager<span style="color:#f92672">.</span><span style="color:#a6e22e">authenticate</span><span style="color:#f92672">(</span>usernamePasswordAuthenticationToken<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//判断是否认证通过
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">isNull</span><span style="color:#f92672">(</span>authenticate<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> RuntimeException<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;用户名或密码错误&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//获取userid生成token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//getPrincipal是获取authenticate的主体，里面封装了之前传入的loginUser
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        LoginUser loginUser <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>LoginUser<span style="color:#f92672">)</span> authenticate<span style="color:#f92672">.</span><span style="color:#a6e22e">getPrincipal</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        String userId <span style="color:#f92672">=</span> loginUser<span style="color:#f92672">.</span><span style="color:#a6e22e">getUser</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getId</span><span style="color:#f92672">().</span><span style="color:#a6e22e">toString</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//将userid加密成jwt
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String jwt <span style="color:#f92672">=</span> JwtUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">createJWT</span><span style="color:#f92672">(</span>userId<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//把用户信息存入redis
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        redisCache<span style="color:#f92672">.</span><span style="color:#a6e22e">setCacheObject</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;bolglogin:&#34;</span><span style="color:#f92672">+</span>userId<span style="color:#f92672">,</span>loginUser<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//把token和userinfo封装返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#75715e">//把User转换成UserInfoVo
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        UserInfoVo userInfoVo <span style="color:#f92672">=</span> BeanCopyUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">copyBean</span><span style="color:#f92672">(</span>loginUser<span style="color:#f92672">.</span><span style="color:#a6e22e">getUser</span><span style="color:#f92672">(),</span> UserInfoVo<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        BlogUserLoginVo vo <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> BlogUserLoginVo<span style="color:#f92672">(</span>jwt<span style="color:#f92672">,</span>userInfoVo<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">okResult</span><span style="color:#f92672">(</span>vo<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>配置security配置类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">configure</span><span style="color:#f92672">(</span>HttpSecurity http<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        http
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//关闭csrf
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">csrf</span><span style="color:#f92672">().</span><span style="color:#a6e22e">disable</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//不通过Session获取SecurityContext
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">sessionManagement</span><span style="color:#f92672">().</span><span style="color:#a6e22e">sessionCreationPolicy</span><span style="color:#f92672">(</span>SessionCreationPolicy<span style="color:#f92672">.</span><span style="color:#a6e22e">STATELESS</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">and</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">authorizeRequests</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 对于登录接口 允许匿名访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/login&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">anonymous</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">//jwt过滤器测试用，如果测试没有问题吧这里删除了
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">antMatchers</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/link/getAllLink&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">authenticated</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e">// 除上面外的所有请求全部不需要认证即可访问
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">anyRequest</span><span style="color:#f92672">().</span><span style="color:#a6e22e">permitAll</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">logout</span><span style="color:#f92672">().</span><span style="color:#a6e22e">disable</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//允许跨域
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">cors</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> PasswordEncoder <span style="color:#a6e22e">passwordEncoder</span><span style="color:#f92672">(){</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> BCryptPasswordEncoder<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<h4 id="登陆校验过滤器">登陆校验过滤器<a hidden class="anchor" aria-hidden="true" href="#登陆校验过滤器">#</a></h4>
+<blockquote>
+<p>​	①定义Jwt认证过滤器</p>
+<p>​				获取token</p>
+<p>​				解析token获取其中的userid</p>
+<p>​				从redis中获取用户信息</p>
+<p>​				存入SecurityContextHolder</p>
+</blockquote>
+<ol>
+<li>配置过滤器</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JwtAuthenticationTokenFilter</span> <span style="color:#66d9ef">extends</span> OncePerRequestFilter <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> RedisCache redisCache<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doFilterInternal</span><span style="color:#f92672">(</span>HttpServletRequest httpServletRequest<span style="color:#f92672">,</span> HttpServletResponse httpServletResponse<span style="color:#f92672">,</span> FilterChain filterChain<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> ServletException<span style="color:#f92672">,</span> IOException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//获取请求头中的token
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String token <span style="color:#f92672">=</span> httpServletRequest<span style="color:#f92672">.</span><span style="color:#a6e22e">getHeader</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;token&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(!</span>StringUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">hasText</span><span style="color:#f92672">(</span>token<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>httpServletRequest<span style="color:#f92672">,</span> httpServletResponse<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//解析获取userid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        Claims claims <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">try</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            claims <span style="color:#f92672">=</span> JwtUtil<span style="color:#f92672">.</span><span style="color:#a6e22e">parseJWT</span><span style="color:#f92672">(</span>token<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">catch</span> <span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//token超时，token非法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            <span style="color:#75715e">//响应告诉前端需要重新登陆
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            ResponseResult responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">NEED_LOGIN</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            WebUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">renderString</span><span style="color:#f92672">(</span>httpServletResponse<span style="color:#f92672">,</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>responseResult<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        String userId <span style="color:#f92672">=</span> claims<span style="color:#f92672">.</span><span style="color:#a6e22e">getSubject</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//从redis中获取用户信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        LoginUser loginUser <span style="color:#f92672">=</span> redisCache<span style="color:#f92672">.</span><span style="color:#a6e22e">getCacheObject</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;bloglogin:&#34;</span> <span style="color:#f92672">+</span> userId<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>Objects<span style="color:#f92672">.</span><span style="color:#a6e22e">isNull</span><span style="color:#f92672">(</span>loginUser<span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e">//响应告诉前端需要重新登陆
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>            ResponseResult responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">NEED_LOGIN</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            WebUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">renderString</span><span style="color:#f92672">(</span>httpServletResponse<span style="color:#f92672">,</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>responseResult<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//存入SecurityContextHolder
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        UsernamePasswordAuthenticationToken authenticationToken <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> UsernamePasswordAuthenticationToken<span style="color:#f92672">(</span>loginUser<span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        SecurityContextHolder<span style="color:#f92672">.</span><span style="color:#a6e22e">getContext</span><span style="color:#f92672">().</span><span style="color:#a6e22e">setAuthentication</span><span style="color:#f92672">(</span>authenticationToken<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>httpServletRequest<span style="color:#f92672">,</span>httpServletResponse<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>security配置</li>
+</ol>
+<p>​	由于重写了configure方法，UsernamepasswordAuthenticationFilter并没有加入到过滤器链中，这里addFilterBefore意思是替换UsernamepasswordAuthenticationFilter原来的位置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">configure</span><span style="color:#f92672">(</span>HttpSecurity http<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> Exception <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">//把jwtAuthenticationTokenFilter添加到SpringSecurity的过滤器链中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        http<span style="color:#f92672">.</span><span style="color:#a6e22e">addFilterBefore</span><span style="color:#f92672">(</span>jwtAuthenticationTokenFilter<span style="color:#f92672">,</span> UsernamePasswordAuthenticationFilter<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="认证失败处理">认证失败处理<a hidden class="anchor" aria-hidden="true" href="#认证失败处理">#</a></h4>
+<blockquote>
+<p>​	目前我们的项目在认证出错或者权限不足的时候响应回来的Json是Security的异常处理结果。但是这个响应的格式肯定是不符合我们项目的接口规范的。所以需要自定义异常处理。</p>
+<p>​	AuthenticationEntryPoint 认证失败处理器</p>
+<p>​	AccessDeniedHandler 授权失败处理器</p>
+</blockquote>
+<ol>
+<li>
+<p>AccessDeniedHandlerImpl实现AccessDeniedHandler接口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AccessDeniedHandlerImpl</span> <span style="color:#66d9ef">implements</span> AccessDeniedHandler <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">handle</span><span style="color:#f92672">(</span>HttpServletRequest request<span style="color:#f92672">,</span> HttpServletResponse response<span style="color:#f92672">,</span> AccessDeniedException e<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        ResponseResult responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">NO_OPERATOR_AUTH</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//响应给前端
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        WebUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">renderString</span><span style="color:#f92672">(</span>response<span style="color:#f92672">,</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>responseResult<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+<li>
+<p>AuthenticationEntryPointImpl实现AuthenticationEntryPoint接口</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Component</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">AuthenticationEntryPointImpl</span> <span style="color:#66d9ef">implements</span> AuthenticationEntryPoint <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">commence</span><span style="color:#f92672">(</span>HttpServletRequest request<span style="color:#f92672">,</span> HttpServletResponse response<span style="color:#f92672">,</span> AuthenticationException e<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        e<span style="color:#f92672">.</span><span style="color:#a6e22e">printStackTrace</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        ResponseResult responseResult <span style="color:#f92672">=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//根据错误类型返回数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>e <span style="color:#66d9ef">instanceof</span> BadCredentialsException<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">LOGIN_ERROR</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getCode</span><span style="color:#f92672">(),</span>e<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>e <span style="color:#66d9ef">instanceof</span> InsufficientAuthenticationException<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">NEED_LOGIN</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span> <span style="color:#66d9ef">else</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            responseResult <span style="color:#f92672">=</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">SYSTEM_ERROR</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getCode</span><span style="color:#f92672">(),</span><span style="color:#e6db74">&#34;认证或授权失败&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//响应给前端
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        WebUtils<span style="color:#f92672">.</span><span style="color:#a6e22e">renderString</span><span style="color:#f92672">(</span>response<span style="color:#f92672">,</span> JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>responseResult<span style="color:#f92672">));</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div></li>
+</ol>
+<h4 id="自定义全局异常">自定义全局异常<a hidden class="anchor" aria-hidden="true" href="#自定义全局异常">#</a></h4>
+<ol>
+<li>自定义一个异常类SystemException</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">SystemException</span> <span style="color:#66d9ef">extends</span> RuntimeException<span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">int</span> code<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> String msg<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">int</span> <span style="color:#a6e22e">getCode</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> code<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> String <span style="color:#a6e22e">getMsg</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> msg<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">SystemException</span><span style="color:#f92672">(</span>AppHttpCodeEnum httpCodeEnum<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>httpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">getMsg</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">code</span> <span style="color:#f92672">=</span> httpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">getCode</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">msg</span> <span style="color:#f92672">=</span> httpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">getMsg</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>写一个handler处理抛出的异常</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@RestControllerAdvice</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GlobalExceptionHandler</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ExceptionHandler</span><span style="color:#f92672">(</span>SystemException<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ResponseResult <span style="color:#a6e22e">systemExceptionHandler</span><span style="color:#f92672">(</span>SystemException e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//打印异常信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;出现了异常！{}&#34;</span><span style="color:#f92672">,</span>e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//从异常对象中获取提示信息封装返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>e<span style="color:#f92672">.</span><span style="color:#a6e22e">getCode</span><span style="color:#f92672">(),</span> e<span style="color:#f92672">.</span><span style="color:#a6e22e">getMsg</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*定义一个handler处理其他异常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">	*/</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ExceptionHandler</span><span style="color:#f92672">(</span>Exception<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> ResponseResult <span style="color:#a6e22e">ExceptionHandler</span><span style="color:#f92672">(</span>Exception e<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//打印异常信息
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;出现了异常！{}&#34;</span><span style="color:#f92672">,</span>e<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//从异常对象中获取提示信息封装返回
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> ResponseResult<span style="color:#f92672">.</span><span style="color:#a6e22e">errorResult</span><span style="color:#f92672">(</span>AppHttpCodeEnum<span style="color:#f92672">.</span><span style="color:#a6e22e">SYSTEM_ERROR</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p><code>@Slf4j</code>：打印日志信息的注解，注解后可以通过log.error打印错误</p>
+<h2 id="关闭8080端口">关闭8080端口<a hidden class="anchor" aria-hidden="true" href="#关闭8080端口">#</a></h2>
+<p>netstat -o -n -a | findstr :8080
+taskkill /F /PID 3116</p>
+<h2 id="异常处理器">异常处理器<a hidden class="anchor" aria-hidden="true" href="#异常处理器">#</a></h2>
+<h4 id="自定义全局异常-1">自定义全局异常<a hidden class="anchor" aria-hidden="true" href="#自定义全局异常-1">#</a></h4>
+<p>用来捕获抛出的异常，其中业务异常处理器需要自定义业务异常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#75715e">/*
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">    全局异常处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ControllerAdvice</span><span style="color:#f92672">(</span>annotations <span style="color:#f92672">=</span> <span style="color:#f92672">{</span>RestController<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> Controller<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">})</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@ResponseBody</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">GlobalExceptionHandler</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 异常处理方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ExceptionHandler</span><span style="color:#f92672">(</span>SQLIntegrityConstraintViolationException<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> R<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">exceptionHandler</span><span style="color:#f92672">(</span>SQLIntegrityConstraintViolationException ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span>ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">().</span><span style="color:#a6e22e">contains</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;Duplicate entry&#34;</span><span style="color:#f92672">))</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            String<span style="color:#f92672">[]</span> split <span style="color:#f92672">=</span> ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">().</span><span style="color:#a6e22e">split</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34; &#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            String msg <span style="color:#f92672">=</span> split<span style="color:#f92672">[</span><span style="color:#ae81ff">2</span><span style="color:#f92672">]</span> <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;已存在&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span>msg<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;未知错误&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * 业务异常处理方法
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     * @return
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@ExceptionHandler</span><span style="color:#f92672">(</span>CustomExpection<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> R<span style="color:#f92672">&lt;</span>String<span style="color:#f92672">&gt;</span> <span style="color:#a6e22e">exceptionHandler</span><span style="color:#f92672">(</span>CustomExpection ex<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span>ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> R<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span>ex<span style="color:#f92672">.</span><span style="color:#a6e22e">getMessage</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">CustomExpection</span> <span style="color:#66d9ef">extends</span> RuntimeException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">CustomExpection</span><span style="color:#f92672">(</span>String message<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span><span style="color:#f92672">(</span>message<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>使用时需要抛出异常</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">throw</span> <span style="color:#66d9ef">new</span> CustomExpection<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;当前分类下关联了套餐，不能删除&#34;</span><span style="color:#f92672">);</span>
+</span></span></code></pre></div><h2 id="使用过滤器完成登录校验">使用过滤器完成登录校验<a hidden class="anchor" aria-hidden="true" href="#使用过滤器完成登录校验">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Slf4j</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">@WebFilter</span><span style="color:#f92672">(</span>filterName <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;loginCheckFilter&#34;</span><span style="color:#f92672">,</span>urlPatterns <span style="color:#f92672">=</span><span style="color:#e6db74">&#34;/*&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">LoginCheckFilter</span> <span style="color:#66d9ef">implements</span> Filter <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">//路径匹配器，支持通配符
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> AntPathMatcher PATH_MATCHER <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> AntPathMatcher<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>ServletRequest servletRequest<span style="color:#f92672">,</span> ServletResponse servletResponse<span style="color:#f92672">,</span> FilterChain filterChain<span style="color:#f92672">)</span> <span style="color:#66d9ef">throws</span> IOException<span style="color:#f92672">,</span> ServletException <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        HttpServletRequest request <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>HttpServletRequest<span style="color:#f92672">)</span> servletRequest<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        HttpServletResponse response <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>HttpServletResponse<span style="color:#f92672">)</span> servletResponse<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//1、获取本次请求的URl
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        String requestURl <span style="color:#f92672">=</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getRequestURI</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;拦截到请求：{}&#34;</span><span style="color:#f92672">,</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getRequestURI</span><span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        String<span style="color:#f92672">[]</span> urls <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/employee/login&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/emplyee/logout&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/backend/**&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/front/**&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">};</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//2、判断本次请求是否需要处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">boolean</span> check <span style="color:#f92672">=</span> check<span style="color:#f92672">(</span>urls<span style="color:#f92672">,</span> requestURl<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//3、如果不需要处理直接放行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>check<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            log<span style="color:#f92672">.</span><span style="color:#a6e22e">info</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;本次请求{}不需要处理&#34;</span><span style="color:#f92672">,</span> requestURl<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//4、判断登录状态，如果已登录，直接放行
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>request<span style="color:#f92672">.</span><span style="color:#a6e22e">getSession</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAttribute</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">!=</span> <span style="color:#66d9ef">null</span><span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>            Long empId<span style="color:#f92672">=(</span>Long<span style="color:#f92672">)</span> request<span style="color:#f92672">.</span><span style="color:#a6e22e">getSession</span><span style="color:#f92672">().</span><span style="color:#a6e22e">getAttribute</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;employee&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            BaseContext<span style="color:#f92672">.</span><span style="color:#a6e22e">setCurrentId</span><span style="color:#f92672">(</span>empId<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            filterChain<span style="color:#f92672">.</span><span style="color:#a6e22e">doFilter</span><span style="color:#f92672">(</span>request<span style="color:#f92672">,</span> response<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//5、如果未登录则返回未登录结果，通过输出流方式向客户端页面响应数据
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        response<span style="color:#f92672">.</span><span style="color:#a6e22e">getWriter</span><span style="color:#f92672">().</span><span style="color:#a6e22e">write</span><span style="color:#f92672">(</span>JSON<span style="color:#f92672">.</span><span style="color:#a6e22e">toJSONString</span><span style="color:#f92672">(</span>R<span style="color:#f92672">.</span><span style="color:#a6e22e">error</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;NOTLOGIN&#34;</span><span style="color:#f92672">)));</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">boolean</span> <span style="color:#a6e22e">check</span><span style="color:#f92672">(</span>String<span style="color:#f92672">[]</span> urls<span style="color:#f92672">,</span> String requestURl<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> <span style="color:#f92672">(</span>String url <span style="color:#f92672">:</span> urls<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">boolean</span> match <span style="color:#f92672">=</span> PATH_MATCHER<span style="color:#f92672">.</span><span style="color:#a6e22e">match</span><span style="color:#f92672">(</span>url<span style="color:#f92672">,</span> requestURl<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>match<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">true</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="其他">其他<a hidden class="anchor" aria-hidden="true" href="#其他">#</a></h2>
+<h4 id="消息转换器">消息转换器<a hidden class="anchor" aria-hidden="true" href="#消息转换器">#</a></h4>
+<p>前端js文件对于Long型数据会产生精度丢失。解决方法使用对象映射器</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.databind.DeserializationFeature<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.databind.ObjectMapper<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.databind.module.SimpleModule<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.databind.ser.std.ToStringSerializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.math.BigInteger<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.time.LocalDate<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.time.LocalDateTime<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.time.LocalTime<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> java.time.format.DateTimeFormatter<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import static</span> com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES<span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 对象映射器:基于jackson将Java对象转为json，或者将json转为Java对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 将JSON解析为Java对象的过程称为 [从JSON反序列化Java对象]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> * 从Java对象生成JSON的过程称为 [序列化Java对象到JSON]
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"> */</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">JacksonObjectMapper</span> <span style="color:#66d9ef">extends</span> ObjectMapper <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String DEFAULT_DATE_FORMAT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyyy-MM-dd&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String DEFAULT_DATE_TIME_FORMAT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;yyyy-MM-dd HH:mm:ss&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">final</span> String DEFAULT_TIME_FORMAT <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;HH:mm:ss&#34;</span><span style="color:#f92672">;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#a6e22e">JacksonObjectMapper</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">super</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//收到未知属性时不报异常
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">configure</span><span style="color:#f92672">(</span>FAIL_ON_UNKNOWN_PROPERTIES<span style="color:#f92672">,</span> <span style="color:#66d9ef">false</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//反序列化时，属性不存在的兼容处理
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">getDeserializationConfig</span><span style="color:#f92672">().</span><span style="color:#a6e22e">withoutFeatures</span><span style="color:#f92672">(</span>DeserializationFeature<span style="color:#f92672">.</span><span style="color:#a6e22e">FAIL_ON_UNKNOWN_PROPERTIES</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        SimpleModule simpleModule <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> SimpleModule<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addDeserializer</span><span style="color:#f92672">(</span>LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalDateTimeDeserializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_DATE_TIME_FORMAT<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addDeserializer</span><span style="color:#f92672">(</span>LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalDateDeserializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_DATE_FORMAT<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addDeserializer</span><span style="color:#f92672">(</span>LocalTime<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalTimeDeserializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_TIME_FORMAT<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addSerializer</span><span style="color:#f92672">(</span>BigInteger<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ToStringSerializer<span style="color:#f92672">.</span><span style="color:#a6e22e">instance</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addSerializer</span><span style="color:#f92672">(</span>Long<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> ToStringSerializer<span style="color:#f92672">.</span><span style="color:#a6e22e">instance</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addSerializer</span><span style="color:#f92672">(</span>LocalDateTime<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalDateTimeSerializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_DATE_TIME_FORMAT<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addSerializer</span><span style="color:#f92672">(</span>LocalDate<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalDateSerializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_DATE_FORMAT<span style="color:#f92672">)))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">addSerializer</span><span style="color:#f92672">(</span>LocalTime<span style="color:#f92672">.</span><span style="color:#a6e22e">class</span><span style="color:#f92672">,</span> <span style="color:#66d9ef">new</span> LocalTimeSerializer<span style="color:#f92672">(</span>DateTimeFormatter<span style="color:#f92672">.</span><span style="color:#a6e22e">ofPattern</span><span style="color:#f92672">(</span>DEFAULT_TIME_FORMAT<span style="color:#f92672">)));</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//注册功能模块 例如，可以添加自定义序列化器和反序列化器
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">this</span><span style="color:#f92672">.</span><span style="color:#a6e22e">registerModule</span><span style="color:#f92672">(</span>simpleModule<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>并在WebConfig中配置</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WebConfig</span> <span style="color:#66d9ef">extends</span> WebMvcConfigurationSupport <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *设置静态资源映射
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addResourceHandlers</span><span style="color:#f92672">(</span>ResourceHandlerRegistry registry<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/backend/**&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classpath:/backend/&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/front/**&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/classpath:/front&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">extendMessageConverters</span><span style="color:#f92672">(</span>List<span style="color:#f92672">&lt;</span>HttpMessageConverter<span style="color:#f92672">&lt;?&gt;&gt;</span> converters<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//创建消息转化器对象
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        MappingJackson2HttpMessageConverter messageConverter <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> MappingJackson2HttpMessageConverter<span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//设置对象转换器，底层使用Jackson将对象转换为json
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        messageConverter<span style="color:#f92672">.</span><span style="color:#a6e22e">setObjectMapper</span><span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> JacksonObjectMapper<span style="color:#f92672">());</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//将上面的消息转换器对象追加到mvc框架的转换器集合中
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        converters<span style="color:#f92672">.</span><span style="color:#a6e22e">add</span><span style="color:#f92672">(</span><span style="color:#ae81ff">0</span><span style="color:#f92672">,</span> messageConverter<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="threadlocal">ThreadLocal<a hidden class="anchor" aria-hidden="true" href="#threadlocal">#</a></h4>
+<p>ThreadLoacal并不是一个Thread，而是Thread的局部变量。当使用ThreadLocal维护变量时，ThreadLocal为每个使用该变量的的线程提供独立的变量副本，所以每一个线程都可以独立的改变自己的副本，而不会影响其他线程所对应的副本。ThreadLocal为每个线程提供单独一份存储空间，具有线程隔离的效果，只有在线程内才能获取相应的值，线程外则不能访问</p>
+<p>ThreadLocal常用方法</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>T value<span style="color:#f92672">)</span> <span style="color:#75715e">//设置当前线程的线程局部变量的值
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">public</span> T <span style="color:#a6e22e">get</span><span style="color:#f92672">()</span>           <span style="color:#75715e">//返回当前线程所对应的线程局部变量的值
+</span></span></span></code></pre></div><p>例：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">BaseContext</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> <span style="color:#66d9ef">static</span> ThreadLocal<span style="color:#f92672">&lt;</span>Long<span style="color:#f92672">&gt;</span> threadLocal <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> ThreadLocal<span style="color:#f92672">&lt;&gt;();</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">setCurrentId</span><span style="color:#f92672">(</span>Long id<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        threadLocal<span style="color:#f92672">.</span><span style="color:#a6e22e">set</span><span style="color:#f92672">(</span>id<span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> <span style="color:#66d9ef">static</span> Long <span style="color:#a6e22e">getCurrentId</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> threadLocal<span style="color:#f92672">.</span><span style="color:#a6e22e">get</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h4 id="静态资源映射">静态资源映射<a hidden class="anchor" aria-hidden="true" href="#静态资源映射">#</a></h4>
+<p>由于只能访问static文件下的静态资源，当需要访问其他文件夹下的静态资源需要在WebConfig里设置静态资源映射</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Configuration</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">public</span> <span style="color:#66d9ef">class</span> <span style="color:#a6e22e">WebConfig</span> <span style="color:#66d9ef">extends</span> WebMvcConfigurationSupport <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">/**
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     *设置静态资源映射
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">     */</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">@Override</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">protected</span> <span style="color:#66d9ef">void</span> <span style="color:#a6e22e">addResourceHandlers</span><span style="color:#f92672">(</span>ResourceHandlerRegistry registry<span style="color:#f92672">)</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/backend/**&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classpath:/backend/&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>        registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/front/**&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/classpath:/front&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><h2 id="spring-cache">Spring Cache<a hidden class="anchor" aria-hidden="true" href="#spring-cache">#</a></h2>
+<p><code>@EnableCaching </code>：开启缓存注解功能</p>
+<p>在controller方法上加入以下注解：</p>
+<p><code>@Cacheable</code>：在方法执行之前spring先查看缓存中是否有数据，如果有数据则直接返回数据；若没有数据，调用方法并将返回值放到缓存中(value=&quot;?&quot;,key=&quot;#result.?&quot;,unless=&ldquo;result==null&rdquo;)，unless满足条件不缓存</p>
+<p><code>@CachePut</code>：将方法的返回值放到缓存中(value=&quot;?&quot;,key=&quot;#result.?&quot;),value是指缓存的名称，key是缓存的键</p>
+<p><code>@CacheEvict</code>：将一条或多条数据从缓存中删除(value=&quot;?&quot;,key=&quot;#root.args[0]&quot; or &ldquo;#id&rdquo;)，allEntries = true删除这个分类下所有的缓存数据</p>
+<p>在启动类上使用@EnableCaching开启缓存支持</p>
+<p>使用redis作为缓存技术，只需要导入Spring data Redis 的maven坐标:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span> <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-data-redis<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span><span style="display:flex;"><span> <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">&lt;groupId&gt;</span>org.springframework.boot<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">&lt;artifactId&gt;</span>spring-boot-starter-cache<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>配置redis=》application.yml</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yml" data-lang="yml"><span style="display:flex;"><span><span style="color:#f92672">spring</span>:
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">cache</span>:
+</span></span><span style="display:flex;"><span>		<span style="color:#f92672">redis</span>:
+</span></span><span style="display:flex;"><span>			<span style="color:#ae81ff">time-to-live:1800000#设置缓存有效期ms</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span><span style="color:#a6e22e">@Autowired</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">private</span> CacheManager cacheManaget
+</span></span></code></pre></div><h2 id="swagger">swagger<a hidden class="anchor" aria-hidden="true" href="#swagger">#</a></h2>
+<p>1、导入依赖</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-xml" data-lang="xml"><span style="display:flex;"><span>     <span style="color:#f92672">&lt;dependency&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&lt;groupId&gt;</span>com.github.xiaoymin<span style="color:#f92672">&lt;/groupId&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&lt;artifactId&gt;</span>knife4j-spring-boot-starter<span style="color:#f92672">&lt;/artifactId&gt;</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">&lt;version&gt;</span>3.0.2<span style="color:#f92672">&lt;/version&gt;</span>
+</span></span><span style="display:flex;"><span>     <span style="color:#f92672">&lt;/dependency&gt;</span>
+</span></span></code></pre></div><p>2、导入knife4j相关配置（WebMvcConfig）</p>
+<p>@EnableSwagger2</p>
+<p>@EnableKnife4j</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>    <span style="color:#a6e22e">@Bean</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">public</span> Docket <span style="color:#a6e22e">createRestApi</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#75715e">//文档类型
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> Docket<span style="color:#f92672">(</span>DocumentationType<span style="color:#f92672">.</span><span style="color:#a6e22e">SWAGGER_2</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">apiInfo</span><span style="color:#f92672">(</span>apiInfo<span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">select</span><span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">apis</span><span style="color:#f92672">(</span>RequestHandlerSelectors<span style="color:#f92672">.</span><span style="color:#a6e22e">basePackage</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;com.itheima.reggie.controller&#34;</span><span style="color:#f92672">))</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">paths</span><span style="color:#f92672">(</span>PathSelectors<span style="color:#f92672">.</span><span style="color:#a6e22e">any</span><span style="color:#f92672">())</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">private</span> ApiInfo <span style="color:#a6e22e">apiInfo</span><span style="color:#f92672">()</span> <span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> <span style="color:#66d9ef">new</span> ApiInfoBuilder<span style="color:#f92672">()</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">title</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;瑞吉外卖&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">version</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;1.0&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">description</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;瑞吉外卖接口文档&#34;</span><span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#f92672">.</span><span style="color:#a6e22e">build</span><span style="color:#f92672">();</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>3、设置静态资源映射</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span> registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;doc.html&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classpath:/META-INF/resources/&#34;</span><span style="color:#f92672">);</span>
+</span></span><span style="display:flex;"><span> registry<span style="color:#f92672">.</span><span style="color:#a6e22e">addResourceHandler</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;/webjars/**&#34;</span><span style="color:#f92672">).</span><span style="color:#a6e22e">addResourceLocations</span><span style="color:#f92672">(</span><span style="color:#e6db74">&#34;classpath:/META-INF/resources/webjars/&#34;</span><span style="color:#f92672">);</span>
+</span></span></code></pre></div><p>4、过滤器中设置不需要处理的请求路径</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-java" data-lang="java"><span style="display:flex;"><span>        String<span style="color:#f92672">[]</span> urls <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> String<span style="color:#f92672">[]{</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/employee/login&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/employee/logout&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/backend/**&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/front/**&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/common/**&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/user/sendMsg&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/user/login&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/doc.html&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/webjars/**&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/swagger-resources&#34;</span><span style="color:#f92672">,</span>
+</span></span><span style="display:flex;"><span>                <span style="color:#e6db74">&#34;/v2/api-docs&#34;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">};</span>
+</span></span></code></pre></div><h4 id="swaggerapi">swaggerApi<a hidden class="anchor" aria-hidden="true" href="#swaggerapi">#</a></h4>
+<p><img loading="lazy" src="/img/blog%e7%ac%94%e8%ae%b0/swaggerApi.png" alt="swaggerApi"  />
+</p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://answerBoom.github.io/tags/java/">Java</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://answerBoom.github.io">🐻 liyBlog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+              delimiters: [
+                  {left: "$$", right: "$$", display: true},
+                  {left: "$", right: "$", display: false}
+              ]
+          });
+    });
+</script>
+</body>
+
+</html>

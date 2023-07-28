@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>leetcode on 🐻 liyBlog</title>
+    <link>https://answerBoom.github.io/tags/leetcode/</link>
+    <description>Recent content in leetcode on 🐻 liyBlog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 01 Oct 2021 11:37:16 +0800</lastBuildDate><atom:link href="https://answerBoom.github.io/tags/leetcode/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Leetcode 重复元素</title>
+      <link>https://answerBoom.github.io/articles/2021/10/01/leetcoderepeatingelement/</link>
+      <pubDate>Fri, 01 Oct 2021 11:37:16 +0800</pubDate>
+      
+      <guid>https://answerBoom.github.io/articles/2021/10/01/leetcoderepeatingelement/</guid>
+      <description>leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
+bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
+int temp; int i=low,j=high-1; if(low&amp;lt;high){ 发现输出结果，基准值右边的两个数不会调换次序
+如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归
+修改后提交代码如下
+void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&amp;lt;high){ temp=nums[i]; while(i&amp;lt;j){ while(j&amp;gt;i&amp;amp;&amp;amp;nums[j]&amp;gt;=temp)j--; if(j&amp;gt;i){ nums[i]=nums[j]; i++; } while(i&amp;lt;j&amp;amp;&amp;amp;nums[i]&amp;lt;=temp)i++; if(i&amp;lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i+1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&amp;lt;numsSize-1;i++){ if(nums[i]==nums[i+1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
+#include &amp;lt;stdio.h&amp;gt; #include &amp;lt;stdlib.</description>
+    </item>
+    
+  </channel>
+</rss>

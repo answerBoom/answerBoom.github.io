@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Java on 🐻 liyBlog</title>
+    <link>https://answerBoom.github.io/tags/java/</link>
+    <description>Recent content in Java on 🐻 liyBlog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Tue, 27 Dec 2022 17:16:20 +0800</lastBuildDate><atom:link href="https://answerBoom.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog笔记</title>
+      <link>https://answerBoom.github.io/articles/2022/12/27/blognote/</link>
+      <pubDate>Tue, 27 Dec 2022 17:16:20 +0800</pubDate>
+      
+      <guid>https://answerBoom.github.io/articles/2022/12/27/blognote/</guid>
+      <description>blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(&amp;#34;sg_article&amp;#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法
+@NoArgsConstructor：提供类的无参构造
+@AllArgsConstructor：提供类的全参构造
+@TableName(&amp;quot;sg_article&amp;quot;)：将表与数据库里的表对应起来
+@Accessors(chain = true)：将get、set方法的返回类型设置为实体类对象，代替了默认的返回void
+实体类中加入数据库中不存在的列名需要加入TableField注解标识
+@TableField(exist = false) private String categoryName; 2. mybatis plus中wapper方法 queryWapper.eq（字段名，val）
+字段名可以用字符串也可以用方法：Article::getStatus
+推荐用方法防止列名写错
+lambdaQueryWrapper.eq(Objects.nonNull(categoryId) &amp;amp;&amp;amp; categoryId &amp;gt; 0, Article::getCategoryId, categoryId);
+eq方法中有三个参数，第一个boolean为true时引入加入后两个参数条件，为false时不加入
+3. 使用page分页需要配置分页插件，在config包下加入以下类 @Configuration public class MbatisPlusConfig { /** * 3.4.0之后版本 * @return */ @Bean public MybatisPlusInterceptor mybatisPlusInterceptor(){ MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor(); mybatisPlusInterceptor.addInnerInterceptor(new PaginationInnerInterceptor()); return mybatisPlusInterceptor; } } 4、公共字段填充 插入时间、更新时间的自动填充</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>hexo on 🐻 liyBlog</title>
+    <link>https://answerBoom.github.io/tags/hexo/</link>
+    <description>Recent content in hexo on 🐻 liyBlog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 08 Jun 2023 19:03:00 +0800</lastBuildDate><atom:link href="https://answerBoom.github.io/tags/hexo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Hexo学习记录</title>
+      <link>https://answerBoom.github.io/articles/2023/06/08/hexonote/</link>
+      <pubDate>Thu, 08 Jun 2023 19:03:00 +0800</pubDate>
+      
+      <guid>https://answerBoom.github.io/articles/2023/06/08/hexonote/</guid>
+      <description>vscode启动和部署 需要先设置vscode权限 get-ExectionPolicy set-ExecutionPolicy RemoteSigned 本地启动hexo hexo s 部署到github npm install hexo-deployer-git --save hexo clean &amp;amp;&amp;amp; hexo generate &amp;amp;&amp;amp; hexo deploy // Git BASH终端 hexo clean; hexo generate; hexo deploy // VSCODE终端 修改 _config.yml 文件 在blog-demo目录下的_config.yml，就是整个Hexo框架的配置文件了。可以在里面修改大部分的配置。详细可参考官方的配置描述。 修改最后一行的配置，将repository修改为你自己的github项目地址即可，还有分支要改为main代表主分支（注意缩进）。
+deploy: type: git repository: git@github.com:answer/answer.github.io.git branch: main hexo clean：删除之前生成的文件，若未生成过静态文件，可忽略此命令。 hexo generate：生成静态文章，可以用hexo g缩写 hexo deploy：部署文章，可以用hexo d缩写 vscode推送项目到GitHub仓库 https://www.fomal.cc/posts/e593433d.html</description>
+    </item>
+    
+  </channel>
+</rss>

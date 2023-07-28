@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>扩散模型 | 🐻 liyBlog</title>
+<meta name="keywords" content="扩散模型">
+<meta name="description" content="扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
+学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
+上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
+经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\epsilon_\theta$去逼近$\epsilon_t$
+重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon&#43;\mu$将随机性转移到这个$\epsilon$常量上
+1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&#34;shape of s:&#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&#39;blue&#39;,edgecolor=&#39;white&#39;); ax.axis(&#39;off&#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)&#43;1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch.">
+<meta name="author" content="">
+<link rel="canonical" href="https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f1ce240cfe5af969a7d47c7624c2a49eda79c4e4fd31a81b2d14d80a5fbc3546.css" integrity="sha256-8c4kDP5a&#43;Wmn1Hx2JMKkntp5xOT9MagbLRTYCl&#43;8NUY=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://answerBoom.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://answerBoom.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://answerBoom.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://answerBoom.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://answerBoom.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="扩散模型" />
+<meta property="og:description" content="扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
+学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
+上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
+经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\epsilon_\theta$去逼近$\epsilon_t$
+重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon&#43;\mu$将随机性转移到这个$\epsilon$常量上
+1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&#34;shape of s:&#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&#39;blue&#39;,edgecolor=&#39;white&#39;); ax.axis(&#39;off&#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)&#43;1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-27T21:11:50+08:00" />
+<meta property="article:modified_time" content="2023-07-27T21:11:50+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="扩散模型"/>
+<meta name="twitter:description" content="扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
+学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
+上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
+经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\epsilon_\theta$去逼近$\epsilon_t$
+重参数化技巧 在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon&#43;\mu$将随机性转移到这个$\epsilon$常量上
+1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(&#34;shape of s:&#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=&#39;blue&#39;,edgecolor=&#39;white&#39;); ax.axis(&#39;off&#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)&#43;1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "扩散模型",
+      "item": "https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "扩散模型",
+  "name": "扩散模型",
+  "description": "扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$\n学习$p_\\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：\n上述公式的均值为$b\\over -2a$，方差为$1\\over a$,计算p的对数损失，使其最大，\n经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\\epsilon_\\theta$去逼近$\\epsilon_t$\n重参数化技巧 在高斯分布$\\aleph(\\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\\aleph(0，1)$中采样，得到$\\sigma*\\epsilon+\\mu$将随机性转移到这个$\\epsilon$常量上\n1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(\u0026#34;shape of s:\u0026#34;,np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color=\u0026#39;blue\u0026#39;,edgecolor=\u0026#39;white\u0026#39;); ax.axis(\u0026#39;off\u0026#39;) dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)+1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch.",
+  "keywords": [
+    "扩散模型"
+  ],
+  "articleBody": "扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$\n学习$p_\\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：\n上述公式的均值为$b\\over -2a$，方差为$1\\over a$,计算p的对数损失，使其最大，\n经过简化后的对数损失，且因为方差是常数，可优化的只有均值： 最后。学习一个$\\epsilon_\\theta$去逼近$\\epsilon_t$\n重参数化技巧 在高斯分布$\\aleph(\\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\\aleph(0，1)$中采样，得到$\\sigma*\\epsilon+\\mu$将随机性转移到这个$\\epsilon$常量上\n1.导入数据 %matplotlib inline import matplotlib.pyplot as plt import numpy as np from sklearn.datasets import make_s_curve import torch s_curve,_ = make_s_curve(10**4,noise=0.1) s_curve = s_curve[:,[0,2]]/10.0 print(\"shape of s:\",np.shape(s_curve)) #样本维度转化为特征维度 data = s_curve.T fig,ax = plt.subplots() ax.scatter(*data,color='blue',edgecolor='white'); ax.axis('off') dataset = torch.Tensor(s_curve).float() 2. 确定超参数的值 num_steps = 100 #制定每一步的beta betas = torch.linspace(-6,6,num_steps) betas = torch.sigmoid(betas)*(0.5e-2 - 1e-5)+1e-5 #计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值 alphas = 1-betas alphas_prod = torch.cumprod(alphas,0) alphas_prod_p = torch.cat([torch.tensor([1]).float(),alphas_prod[:-1]],0) alphas_bar_sqrt = torch.sqrt(alphas_prod) one_minus_alphas_bar_log = torch.log(1 - alphas_prod) one_minus_alphas_bar_sqrt = torch.sqrt(1 - alphas_prod) assert alphas.shape==alphas_prod.shape==alphas_prod_p.shape==\\ alphas_bar_sqrt.shape==one_minus_alphas_bar_log.shape\\ ==one_minus_alphas_bar_sqrt.shape print(\"all the same shape\",betas.shape) 3. 确定扩散过程任意时刻的采样值 #计算任意时刻的x采样值，基于x_0和重参数化 def q_x(x_0,t): \"\"\"可以基于x[0]得到任意时刻t的x[t]\"\"\" noise = torch.randn_like(x_0) alphas_t = alphas_bar_sqrt[t] alphas_1_m_t = one_minus_alphas_bar_sqrt[t] return (alphas_t * x_0 + alphas_1_m_t * noise)#在x[0]的基础上添加噪声 4. 定义网络模型 import torch import torch.nn as nn class MLPDiffusion(nn.Module): def __init__(self,n_steps,num_units=128): super(MLPDiffusion,self).__init__() self.linears = nn.ModuleList( [ nn.Linear(2,num_units), nn.ReLU(), nn.Linear(num_units,num_units), nn.ReLU(), nn.Linear(num_units,num_units), nn.ReLU(), nn.Linear(num_units,2), ] ) self.step_embeddings = nn.ModuleList( [\t# 定义一个大小为时间t，维度为128的查询表 nn.Embedding(n_steps,num_units), nn.Embedding(n_steps,num_units), nn.Embedding(n_steps,num_units), ] ) def forward(self,x,t): # x = x_0 for idx,embedding_layer in enumerate(self.step_embeddings): t_embedding = embedding_layer(t) # 2*idx 表示通过索引 idx 访问模块列表中的线性层，因为每个线性层后面紧跟着一个激活函数层。0、2、4 x = self.linears[2*idx](x) x += t_embedding x = self.linears[2*idx+1](x) x = self.linears[-1](x) return x embedding的理解 embedding = nn.Embedding(embeddings_nums,embeddings_dim) # 例如（5，3） \"\"\" print(embedding): tensor([[-1.8056, 0.1836, -1.4376], [ 0.8409, 0.1034, -1.3735], [-1.3317, 0.8350, -1.7235], [ 1.5251, -0.2363, -0.6729], [ 0.4148, -0.0923, 0.2459]], requires_grad=True) \"\"\" embeddings_nums：查询表的大小 embeddings_dim：每个查询向量的维度 定义一个具有embeddings_nums个单词，维度为dim的查询矩阵\nout = embdding(0) # 表示获取查询矩阵中ID为0的查询向量 # out = [-1.8056, 0.1836, -1.4376] 5. 训练的误差函数 逆向过程算出的均值和模型预测出的均值算了个均方误差，展开成噪声的均方误差\ndef diffusion_loss_fn(model,x_0,alphas_bar_sqrt,one_minus_alphas_bar_sqrt,n_steps): \"\"\"对任意时刻t进行采样计算loss\"\"\" batch_size = x_0.shape[0] #对一个batchsize样本生成随机的时刻t t = torch.randint(0,n_steps,size=(batch_size//2,)) t = torch.cat([t,n_steps-1-t],dim=0) #[batch_size] t = t.unsqueeze(-1)\t#[batch_size] \"\"\" print(t.shape)为(128,1) \"\"\" #x0的系数 a = alphas_bar_sqrt[t] # a.shape为(128,1) #eps的系数 aml = one_minus_alphas_bar_sqrt[t] #生成随机噪音eps e = torch.randn_like(x_0) #构造模型的输入 #这里x的维度为(128，2)，a的维度为(128,1),维度相同才能进行*，若不对t.unsqueeze(-1)，则a的维度为(128)，不能进行运算 x = x_0*a+e*aml #送入模型，得到t时刻的随机噪声预测值 output = model(x,t.squeeze(-1)) #与真实噪声一起计算误差，求平均值 return (e - output).square().mean() 6. 逆扩散采样函数（inference） def p_sample_loop(model,shape,n_steps,betas,one_minus_alphas_bar_sqrt): \"\"\"从x[T]恢复x[T-1]、x[T-2]|...x[0]\"\"\" cur_x = torch.randn(shape) x_seq = [cur_x] for i in reversed(range(n_steps)): cur_x = p_sample(model,cur_x,i,betas,one_minus_alphas_bar_sqrt) x_seq.append(cur_x) return x_seq def p_sample(model,x,t,betas,one_minus_alphas_bar_sqrt): \"\"\"从x[T]采样t时刻的重构值\"\"\" t = torch.tensor([t]) coeff = betas[t] / one_minus_alphas_bar_sqrt[t] eps_theta = model(x,t) mean = (1/(1-betas[t]).sqrt())*(x-(coeff*eps_theta)) z = torch.randn_like(x) sigma_t = betas[t].sqrt() sample = mean + sigma_t * z return (sample) 7. 开始训练模型 seed = 1234 class EMA(): \"\"\"构建一个参数平滑器\"\"\" def __init__(self,mu=0.01): self.mu = mu self.shadow = {} def register(self,name,val): self.shadow[name] = val.clone() def __call__(self,name,x): assert name in self.shadow new_average = self.mu * x + (1.0-self.mu)*self.shadow[name] self.shadow[name] = new_average.clone() return new_average print('Training model...') batch_size = 128 dataloader = torch.utils.data.DataLoader(dataset,batch_size=batch_size,shuffle=True) num_epoch = 4000 plt.rc('text',color='blue') model = MLPDiffusion(num_steps)#输出维度是2，输入是x和step optimizer = torch.optim.Adam(model.parameters(),lr=1e-3) for t in range(num_epoch): for idx,batch_x in enumerate(dataloader): loss = diffusion_loss_fn(model,batch_x,alphas_bar_sqrt,one_minus_alphas_bar_sqrt,num_steps) optimizer.zero_grad() loss.backward() torch.nn.utils.clip_grad_norm_(model.parameters(),1.) optimizer.step() if(t%100==0): print(loss) x_seq = p_sample_loop(model,dataset.shape,num_steps,betas,one_minus_alphas_bar_sqrt) fig,axs = plt.subplots(1,10,figsize=(28,3)) for i in range(1,11): cur_x = x_seq[i*10].detach() axs[i-1].scatter(cur_x[:,0],cur_x[:,1],color='red',edgecolor='white'); axs[i-1].set_axis_off(); axs[i-1].set_title('$q(\\mathbf{x}_{'+str(i*10)+'})$') 参数平滑器 ​\t上述代码定义了一个参数平滑器 EMA，用于对模型的参数进行平滑处理。该类的主要功能是维护一个影子参数字典 shadow，其中保存了每个参数的平滑后的数值。\n​\t构造函数 __init__ 中接收一个参数 mu，用于控制平滑的程度，默认为 0.01。\n​\tregister 方法用于注册参数，将参数的名称和初始值保存到影子参数字典 shadow 中。\n​\t__call__ 方法用于对指定参数进行平滑处理。它接收参数名称 name 和参数值 x，首先检查参数名称是否存在于影子参数字典 shadow 中，然后根据指定的平滑系数 mu，计算新的平滑参数值 new_average，并更新影子参数字典中的对应数值。最后返回新的平滑参数值。\n​\t通过使用 EMA 类，可以实现对模型参数的平滑更新，使模型在训练过程中的参数变化更加平缓。这可以有助于提高模型的稳定性和收敛性。\n训练过程 ​\ttorch.nn.utils.clip_grad_norm_ 是一个用于梯度裁剪的函数，它可以帮助限制梯度的范数，防止梯度爆炸问题。clip_grad_norm_ 函数接受两个参数：parameters 和 max_norm。parameters 是模型的参数列表，而 max_norm 是用于裁剪梯度的最大范数值。\n​\t在代码中，torch.nn.utils.clip_grad_norm_(model.parameters(), 1.) 表示对模型的所有参数进行梯度裁剪，将梯度的范数限制在 1.0 内。这样可以确保梯度不会过大，避免训练过程中的不稳定性。\n​\t接下来，optimizer.step() 是优化器的一个方法，用于更新模型的参数。它根据计算得到的梯度来更新参数，使模型向更好的方向前进。通过执行 optimizer.step()，可以使模型在训练过程中不断优化和更新。\n认识dataloader dataloader = torch.utils.data.DataLoader(dataset,batch_size=batch_size,shuffle=True) ​\ttorch.utils.data.DataLoader 是 PyTorch 中用于加载数据的工具类。在给定数据集 dataset 的情况下，DataLoader 可以帮助我们以指定的批量大小 batch_size 加载数据，并提供一些额外的功能，如数据打乱（通过设置 shuffle=True）和并行加载数据。\n​\t具体来说，上述代码创建了一个 DataLoader 对象 dataloader，它将数据集 dataset 分成以 batch_size 为大小的批次。设置 shuffle=True 表示在每个 epoch 中对数据进行打乱，以增加数据的随机性。\n​\t通过使用 dataloader，我们可以轻松地迭代遍历数据集，每次迭代获得一个批次的数据，方便进行训练或推断操作。\n参考 [什么是扩散模型？ |利尔日志 (lilianweng.github.io)](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#:~:text=Diffusion models are inspired by non-equilibrium thermodynamics. They,to construct desired data samples from the noise.)\nProbabilistic Diffusion Model概率扩散模型理论与完整PyTorch代码详细解读_哔哩哔哩_bilibili\ndeep_thoughts的扩散模型笔记 (bilibili.com)\n",
+  "wordCount" : "527",
+  "inLanguage": "en",
+  "datePublished": "2023-07-27T21:11:50+08:00",
+  "dateModified": "2023-07-27T21:11:50+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://answerBoom.github.io/articles/2023/07/27/diffusion-models-note/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "🐻 liyBlog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://answerBoom.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://answerBoom.github.io" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="https://answerBoom.github.io/" title="主页">
+                    <span>主页</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+            <li>
+                <a href="https://answerBoom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
+                    <span>查找</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    <div class="breadcrumbs"><a href="https://answerBoom.github.io">Home</a></div>
+    <h1 class="post-title">
+      扩散模型
+    </h1>
+    <div class="post-meta"><span title='2023-07-27 21:11:50 +0800 CST'>July 27, 2023</span>&nbsp;·&nbsp;3 min
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#%e6%89%a9%e6%95%a3%e6%a8%a1%e5%9e%8b%e5%ad%a6%e4%b9%a0%e7%ac%94%e8%ae%b0" aria-label="扩散模型学习笔记">扩散模型学习笔记</a><ul>
+                        
+                <li>
+                    <a href="#%e6%80%9d%e8%b7%af" aria-label="思路">思路</a><ul>
+                        
+                <li>
+                    <a href="#%e9%87%8d%e5%8f%82%e6%95%b0%e5%8c%96%e6%8a%80%e5%b7%a7" aria-label="重参数化技巧">重参数化技巧</a></li></ul>
+                </li>
+                <li>
+                    <a href="#1%e5%af%bc%e5%85%a5%e6%95%b0%e6%8d%ae" aria-label="1.导入数据">1.导入数据</a></li>
+                <li>
+                    <a href="#2-%e7%a1%ae%e5%ae%9a%e8%b6%85%e5%8f%82%e6%95%b0%e7%9a%84%e5%80%bc" aria-label="2. 确定超参数的值">2. 确定超参数的值</a></li>
+                <li>
+                    <a href="#3-%e7%a1%ae%e5%ae%9a%e6%89%a9%e6%95%a3%e8%bf%87%e7%a8%8b%e4%bb%bb%e6%84%8f%e6%97%b6%e5%88%bb%e7%9a%84%e9%87%87%e6%a0%b7%e5%80%bc" aria-label="3. 确定扩散过程任意时刻的采样值">3. 确定扩散过程任意时刻的采样值</a></li>
+                <li>
+                    <a href="#4-%e5%ae%9a%e4%b9%89%e7%bd%91%e7%bb%9c%e6%a8%a1%e5%9e%8b" aria-label="4. 定义网络模型">4. 定义网络模型</a><ul>
+                        
+                <li>
+                    <a href="#embedding%e7%9a%84%e7%90%86%e8%a7%a3" aria-label="embedding的理解">embedding的理解</a></li></ul>
+                </li>
+                <li>
+                    <a href="#5-%e8%ae%ad%e7%bb%83%e7%9a%84%e8%af%af%e5%b7%ae%e5%87%bd%e6%95%b0" aria-label="5. 训练的误差函数">5. 训练的误差函数</a></li>
+                <li>
+                    <a href="#6-%e9%80%86%e6%89%a9%e6%95%a3%e9%87%87%e6%a0%b7%e5%87%bd%e6%95%b0inference" aria-label="6. 逆扩散采样函数（inference）">6. 逆扩散采样函数（inference）</a></li>
+                <li>
+                    <a href="#7-%e5%bc%80%e5%a7%8b%e8%ae%ad%e7%bb%83%e6%a8%a1%e5%9e%8b" aria-label="7. 开始训练模型">7. 开始训练模型</a><ul>
+                        
+                <li>
+                    <a href="#%e5%8f%82%e6%95%b0%e5%b9%b3%e6%bb%91%e5%99%a8" aria-label="参数平滑器">参数平滑器</a></li>
+                <li>
+                    <a href="#%e8%ae%ad%e7%bb%83%e8%bf%87%e7%a8%8b" aria-label="训练过程">训练过程</a></li>
+                <li>
+                    <a href="#%e8%ae%a4%e8%af%86dataloader" aria-label="认识dataloader">认识dataloader</a></li></ul>
+                </li>
+                <li>
+                    <a href="#%e5%8f%82%e8%80%83" aria-label="参考">参考</a>
+                </li>
+            </ul>
+            </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="扩散模型学习笔记">扩散模型学习笔记<a hidden class="anchor" aria-hidden="true" href="#扩散模型学习笔记">#</a></h1>
+<h2 id="思路">思路<a hidden class="anchor" aria-hidden="true" href="#思路">#</a></h2>
+<p><img loading="lazy" src="https://img-blog.csdnimg.cn/29a8c10f2efc4affa2a64612788e3a6e.png" alt="请添加图片描述"  />
+
+训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$</p>
+<p><img loading="lazy" src="https://img-blog.csdnimg.cn/0fa96f89b3444418aa5d37c783e22079.png" alt="请添加图片描述"  />
+</p>
+<p>学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：</p>
+<p><img loading="lazy" src="https://img-blog.csdnimg.cn/c29e960533744e52b5f1ff2dae481940.png" alt="请添加图片描述"  />
+</p>
+<p>上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，</p>
+<p><img loading="lazy" src="https://img-blog.csdnimg.cn/774397863b8140f6868b7a1d83359fca.png" alt="请添加图片描述"  />
+
+<img loading="lazy" src="https://img-blog.csdnimg.cn/befd7e73d7734bb6ab3030ca4c180a54.png" alt="请添加图片描述"  />
+</p>
+<p>经过简化后的对数损失，且因为方差是常数，可优化的只有均值：
+<img loading="lazy" src="https://img-blog.csdnimg.cn/58495f9916884f48ae3294b3f4f3073f.png" alt="请添加图片描述"  />
+</p>
+<p>最后。学习一个$\epsilon_\theta$去逼近$\epsilon_t$</p>
+<h3 id="重参数化技巧">重参数化技巧<a hidden class="anchor" aria-hidden="true" href="#重参数化技巧">#</a></h3>
+<p>在高斯分布$\aleph(\mu,sigma^2)$中采样是一个随机过程，不能进行反向传播梯度，可以先从标准分布$\aleph(0，1)$中采样，得到$\sigma*\epsilon+\mu$将随机性转移到这个$\epsilon$常量上</p>
+<h2 id="1导入数据">1.导入数据<a hidden class="anchor" aria-hidden="true" href="#1导入数据">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">%</span>matplotlib inline
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> matplotlib.pyplot <span style="color:#66d9ef">as</span> plt
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> numpy <span style="color:#66d9ef">as</span> np
+</span></span><span style="display:flex;"><span><span style="color:#f92672">from</span> sklearn.datasets <span style="color:#f92672">import</span> make_s_curve
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>s_curve,_ <span style="color:#f92672">=</span> make_s_curve(<span style="color:#ae81ff">10</span><span style="color:#f92672">**</span><span style="color:#ae81ff">4</span>,noise<span style="color:#f92672">=</span><span style="color:#ae81ff">0.1</span>)
+</span></span><span style="display:flex;"><span>s_curve <span style="color:#f92672">=</span> s_curve[:,[<span style="color:#ae81ff">0</span>,<span style="color:#ae81ff">2</span>]]<span style="color:#f92672">/</span><span style="color:#ae81ff">10.0</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;shape of s:&#34;</span>,np<span style="color:#f92672">.</span>shape(s_curve))
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#样本维度转化为特征维度</span>
+</span></span><span style="display:flex;"><span>data <span style="color:#f92672">=</span> s_curve<span style="color:#f92672">.</span>T
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>fig,ax <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots()
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>scatter(<span style="color:#f92672">*</span>data,color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;blue&#39;</span>,edgecolor<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;white&#39;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ax<span style="color:#f92672">.</span>axis(<span style="color:#e6db74">&#39;off&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>dataset <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>Tensor(s_curve)<span style="color:#f92672">.</span>float()
+</span></span></code></pre></div><h2 id="2-确定超参数的值">2. 确定超参数的值<a hidden class="anchor" aria-hidden="true" href="#2-确定超参数的值">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>num_steps <span style="color:#f92672">=</span> <span style="color:#ae81ff">100</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#制定每一步的beta</span>
+</span></span><span style="display:flex;"><span>betas <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>linspace(<span style="color:#f92672">-</span><span style="color:#ae81ff">6</span>,<span style="color:#ae81ff">6</span>,num_steps)
+</span></span><span style="display:flex;"><span>betas <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>sigmoid(betas)<span style="color:#f92672">*</span>(<span style="color:#ae81ff">0.5e-2</span> <span style="color:#f92672">-</span> <span style="color:#ae81ff">1e-5</span>)<span style="color:#f92672">+</span><span style="color:#ae81ff">1e-5</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#计算alpha、alpha_prod、alpha_prod_previous、alpha_bar_sqrt等变量的值</span>
+</span></span><span style="display:flex;"><span>alphas <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span><span style="color:#f92672">-</span>betas
+</span></span><span style="display:flex;"><span>alphas_prod <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cumprod(alphas,<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>alphas_prod_p <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cat([torch<span style="color:#f92672">.</span>tensor([<span style="color:#ae81ff">1</span>])<span style="color:#f92672">.</span>float(),alphas_prod[:<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]],<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span>alphas_bar_sqrt <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>sqrt(alphas_prod)
+</span></span><span style="display:flex;"><span>one_minus_alphas_bar_log <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>log(<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> alphas_prod)
+</span></span><span style="display:flex;"><span>one_minus_alphas_bar_sqrt <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>sqrt(<span style="color:#ae81ff">1</span> <span style="color:#f92672">-</span> alphas_prod)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">assert</span> alphas<span style="color:#f92672">.</span>shape<span style="color:#f92672">==</span>alphas_prod<span style="color:#f92672">.</span>shape<span style="color:#f92672">==</span>alphas_prod_p<span style="color:#f92672">.</span>shape<span style="color:#f92672">==</span>\
+</span></span><span style="display:flex;"><span>alphas_bar_sqrt<span style="color:#f92672">.</span>shape<span style="color:#f92672">==</span>one_minus_alphas_bar_log<span style="color:#f92672">.</span>shape\
+</span></span><span style="display:flex;"><span><span style="color:#f92672">==</span>one_minus_alphas_bar_sqrt<span style="color:#f92672">.</span>shape
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#34;all the same shape&#34;</span>,betas<span style="color:#f92672">.</span>shape)
+</span></span></code></pre></div><h2 id="3-确定扩散过程任意时刻的采样值">3. 确定扩散过程任意时刻的采样值<a hidden class="anchor" aria-hidden="true" href="#3-确定扩散过程任意时刻的采样值">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#75715e">#计算任意时刻的x采样值，基于x_0和重参数化</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">q_x</span>(x_0,t):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;可以基于x[0]得到任意时刻t的x[t]&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    noise <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randn_like(x_0)
+</span></span><span style="display:flex;"><span>    alphas_t <span style="color:#f92672">=</span> alphas_bar_sqrt[t]
+</span></span><span style="display:flex;"><span>    alphas_1_m_t <span style="color:#f92672">=</span> one_minus_alphas_bar_sqrt[t]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (alphas_t <span style="color:#f92672">*</span> x_0 <span style="color:#f92672">+</span> alphas_1_m_t <span style="color:#f92672">*</span> noise)<span style="color:#75715e">#在x[0]的基础上添加噪声</span>
+</span></span></code></pre></div><p><img loading="lazy" src="https://img-blog.csdnimg.cn/f6739778329f42e68b155771ead4d015.png" alt="请添加图片描述"  />
+</p>
+<h2 id="4-定义网络模型">4. 定义网络模型<a hidden class="anchor" aria-hidden="true" href="#4-定义网络模型">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#f92672">import</span> torch
+</span></span><span style="display:flex;"><span><span style="color:#f92672">import</span> torch.nn <span style="color:#66d9ef">as</span> nn
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">MLPDiffusion</span>(nn<span style="color:#f92672">.</span>Module):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self,n_steps,num_units<span style="color:#f92672">=</span><span style="color:#ae81ff">128</span>):
+</span></span><span style="display:flex;"><span>        super(MLPDiffusion,self)<span style="color:#f92672">.</span>__init__()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>linears <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>ModuleList(
+</span></span><span style="display:flex;"><span>            [
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Linear(<span style="color:#ae81ff">2</span>,num_units),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Linear(num_units,num_units),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Linear(num_units,num_units),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>ReLU(),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Linear(num_units,<span style="color:#ae81ff">2</span>),
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>step_embeddings <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>ModuleList(
+</span></span><span style="display:flex;"><span>            [	 
+</span></span><span style="display:flex;"><span>                <span style="color:#75715e"># 定义一个大小为时间t，维度为128的查询表</span>
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Embedding(n_steps,num_units),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Embedding(n_steps,num_units),
+</span></span><span style="display:flex;"><span>                nn<span style="color:#f92672">.</span>Embedding(n_steps,num_units),
+</span></span><span style="display:flex;"><span>            ]
+</span></span><span style="display:flex;"><span>        )
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">forward</span>(self,x,t):
+</span></span><span style="display:flex;"><span><span style="color:#75715e">#         x = x_0</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> idx,embedding_layer <span style="color:#f92672">in</span> enumerate(self<span style="color:#f92672">.</span>step_embeddings):
+</span></span><span style="display:flex;"><span>            t_embedding <span style="color:#f92672">=</span> embedding_layer(t)
+</span></span><span style="display:flex;"><span>            <span style="color:#75715e"># 2*idx 表示通过索引 idx 访问模块列表中的线性层，因为每个线性层后面紧跟着一个激活函数层。0、2、4</span>
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>linears[<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>idx](x)
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">+=</span> t_embedding
+</span></span><span style="display:flex;"><span>            x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>linears[<span style="color:#ae81ff">2</span><span style="color:#f92672">*</span>idx<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>](x)
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>        x <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>linears[<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>](x)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> x
+</span></span></code></pre></div><h3 id="embedding的理解">embedding的理解<a hidden class="anchor" aria-hidden="true" href="#embedding的理解">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>embedding <span style="color:#f92672">=</span> nn<span style="color:#f92672">.</span>Embedding(embeddings_nums,embeddings_dim)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 例如（5，3）</span>
+</span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">print(embedding):
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">tensor([[-1.8056,  0.1836, -1.4376],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        [ 0.8409,  0.1034, -1.3735],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        [-1.3317,  0.8350, -1.7235],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        [ 1.5251, -0.2363, -0.6729],
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        [ 0.4148, -0.0923,  0.2459]], requires_grad=True)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><ol>
+<li>embeddings_nums：查询表的大小</li>
+<li>embeddings_dim：每个查询向量的维度</li>
+</ol>
+<p>定义一个具有embeddings_nums个单词，维度为dim的查询矩阵</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>out <span style="color:#f92672">=</span> embdding(<span style="color:#ae81ff">0</span>)
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># 表示获取查询矩阵中ID为0的查询向量</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># out = [-1.8056,  0.1836, -1.4376]</span>
+</span></span></code></pre></div><h2 id="5-训练的误差函数">5. 训练的误差函数<a hidden class="anchor" aria-hidden="true" href="#5-训练的误差函数">#</a></h2>
+<p><img loading="lazy" src="https://img-blog.csdnimg.cn/21e48a15f445453d8ae2a45e727a3c6a.png" alt="请添加图片描述"  />
+</p>
+<p>逆向过程算出的均值和模型预测出的均值算了个均方误差，展开成噪声的均方误差</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">diffusion_loss_fn</span>(model,x_0,alphas_bar_sqrt,one_minus_alphas_bar_sqrt,n_steps):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;对任意时刻t进行采样计算loss&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    batch_size <span style="color:#f92672">=</span> x_0<span style="color:#f92672">.</span>shape[<span style="color:#ae81ff">0</span>]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#对一个batchsize样本生成随机的时刻t</span>
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randint(<span style="color:#ae81ff">0</span>,n_steps,size<span style="color:#f92672">=</span>(batch_size<span style="color:#f92672">//</span><span style="color:#ae81ff">2</span>,))
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>cat([t,n_steps<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span><span style="color:#f92672">-</span>t],dim<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>) <span style="color:#75715e">#[batch_size]</span>
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> t<span style="color:#f92672">.</span>unsqueeze(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)	<span style="color:#75715e">#[batch_size]</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    print(t.shape)为(128,1)
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    &#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#x0的系数</span>
+</span></span><span style="display:flex;"><span>    a <span style="color:#f92672">=</span> alphas_bar_sqrt[t]
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># a.shape为(128,1)</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#eps的系数</span>
+</span></span><span style="display:flex;"><span>    aml <span style="color:#f92672">=</span> one_minus_alphas_bar_sqrt[t]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#生成随机噪音eps</span>
+</span></span><span style="display:flex;"><span>    e <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randn_like(x_0)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#构造模型的输入</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#这里x的维度为(128，2)，a的维度为(128,1),维度相同才能进行*，若不对t.unsqueeze(-1)，则a的维度为(128)，不能进行运算</span>
+</span></span><span style="display:flex;"><span>    x <span style="color:#f92672">=</span> x_0<span style="color:#f92672">*</span>a<span style="color:#f92672">+</span>e<span style="color:#f92672">*</span>aml
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#送入模型，得到t时刻的随机噪声预测值</span>
+</span></span><span style="display:flex;"><span>    output <span style="color:#f92672">=</span> model(x,t<span style="color:#f92672">.</span>squeeze(<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">#与真实噪声一起计算误差，求平均值</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (e <span style="color:#f92672">-</span> output)<span style="color:#f92672">.</span>square()<span style="color:#f92672">.</span>mean()
+</span></span></code></pre></div><h2 id="6-逆扩散采样函数inference">6. 逆扩散采样函数（inference）<a hidden class="anchor" aria-hidden="true" href="#6-逆扩散采样函数inference">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">p_sample_loop</span>(model,shape,n_steps,betas,one_minus_alphas_bar_sqrt):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;从x[T]恢复x[T-1]、x[T-2]|...x[0]&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    cur_x <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randn(shape)
+</span></span><span style="display:flex;"><span>    x_seq <span style="color:#f92672">=</span> [cur_x]
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> reversed(range(n_steps)):
+</span></span><span style="display:flex;"><span>        cur_x <span style="color:#f92672">=</span> p_sample(model,cur_x,i,betas,one_minus_alphas_bar_sqrt)
+</span></span><span style="display:flex;"><span>        x_seq<span style="color:#f92672">.</span>append(cur_x)
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> x_seq
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">def</span> <span style="color:#a6e22e">p_sample</span>(model,x,t,betas,one_minus_alphas_bar_sqrt):
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;从x[T]采样t时刻的重构值&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    t <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>tensor([t])
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    coeff <span style="color:#f92672">=</span> betas[t] <span style="color:#f92672">/</span> one_minus_alphas_bar_sqrt[t]
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    eps_theta <span style="color:#f92672">=</span> model(x,t)
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    mean <span style="color:#f92672">=</span> (<span style="color:#ae81ff">1</span><span style="color:#f92672">/</span>(<span style="color:#ae81ff">1</span><span style="color:#f92672">-</span>betas[t])<span style="color:#f92672">.</span>sqrt())<span style="color:#f92672">*</span>(x<span style="color:#f92672">-</span>(coeff<span style="color:#f92672">*</span>eps_theta))
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    z <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>randn_like(x)
+</span></span><span style="display:flex;"><span>    sigma_t <span style="color:#f92672">=</span> betas[t]<span style="color:#f92672">.</span>sqrt()
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    sample <span style="color:#f92672">=</span> mean <span style="color:#f92672">+</span> sigma_t <span style="color:#f92672">*</span> z
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> (sample)
+</span></span></code></pre></div><p><img loading="lazy" src="https://img-blog.csdnimg.cn/a5a590ebfea94606a3b82cb190a48b37.png" alt="请添加图片描述"  />
+</p>
+<h2 id="7-开始训练模型">7. 开始训练模型<a hidden class="anchor" aria-hidden="true" href="#7-开始训练模型">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>seed <span style="color:#f92672">=</span> <span style="color:#ae81ff">1234</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">class</span> <span style="color:#a6e22e">EMA</span>():
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#34;&#34;&#34;构建一个参数平滑器&#34;&#34;&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __init__(self,mu<span style="color:#f92672">=</span><span style="color:#ae81ff">0.01</span>):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>mu <span style="color:#f92672">=</span> mu
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>shadow <span style="color:#f92672">=</span> {}
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> <span style="color:#a6e22e">register</span>(self,name,val):
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>shadow[name] <span style="color:#f92672">=</span> val<span style="color:#f92672">.</span>clone()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">def</span> __call__(self,name,x):
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">assert</span> name <span style="color:#f92672">in</span> self<span style="color:#f92672">.</span>shadow
+</span></span><span style="display:flex;"><span>        new_average <span style="color:#f92672">=</span> self<span style="color:#f92672">.</span>mu <span style="color:#f92672">*</span> x <span style="color:#f92672">+</span> (<span style="color:#ae81ff">1.0</span><span style="color:#f92672">-</span>self<span style="color:#f92672">.</span>mu)<span style="color:#f92672">*</span>self<span style="color:#f92672">.</span>shadow[name]
+</span></span><span style="display:flex;"><span>        self<span style="color:#f92672">.</span>shadow[name] <span style="color:#f92672">=</span> new_average<span style="color:#f92672">.</span>clone()
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> new_average
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>print(<span style="color:#e6db74">&#39;Training model...&#39;</span>)
+</span></span><span style="display:flex;"><span>batch_size <span style="color:#f92672">=</span> <span style="color:#ae81ff">128</span>
+</span></span><span style="display:flex;"><span>dataloader <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>utils<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>DataLoader(dataset,batch_size<span style="color:#f92672">=</span>batch_size,shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span><span style="display:flex;"><span>num_epoch <span style="color:#f92672">=</span> <span style="color:#ae81ff">4000</span>
+</span></span><span style="display:flex;"><span>plt<span style="color:#f92672">.</span>rc(<span style="color:#e6db74">&#39;text&#39;</span>,color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;blue&#39;</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>model <span style="color:#f92672">=</span> MLPDiffusion(num_steps)<span style="color:#75715e">#输出维度是2，输入是x和step</span>
+</span></span><span style="display:flex;"><span>optimizer <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>optim<span style="color:#f92672">.</span>Adam(model<span style="color:#f92672">.</span>parameters(),lr<span style="color:#f92672">=</span><span style="color:#ae81ff">1e-3</span>)
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> t <span style="color:#f92672">in</span> range(num_epoch):
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> idx,batch_x <span style="color:#f92672">in</span> enumerate(dataloader):
+</span></span><span style="display:flex;"><span>        loss <span style="color:#f92672">=</span> diffusion_loss_fn(model,batch_x,alphas_bar_sqrt,one_minus_alphas_bar_sqrt,num_steps)
+</span></span><span style="display:flex;"><span>        optimizer<span style="color:#f92672">.</span>zero_grad()
+</span></span><span style="display:flex;"><span>        loss<span style="color:#f92672">.</span>backward()
+</span></span><span style="display:flex;"><span>        torch<span style="color:#f92672">.</span>nn<span style="color:#f92672">.</span>utils<span style="color:#f92672">.</span>clip_grad_norm_(model<span style="color:#f92672">.</span>parameters(),<span style="color:#ae81ff">1.</span>)
+</span></span><span style="display:flex;"><span>        optimizer<span style="color:#f92672">.</span>step()
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(t<span style="color:#f92672">%</span><span style="color:#ae81ff">100</span><span style="color:#f92672">==</span><span style="color:#ae81ff">0</span>):
+</span></span><span style="display:flex;"><span>        print(loss)
+</span></span><span style="display:flex;"><span>        x_seq <span style="color:#f92672">=</span> p_sample_loop(model,dataset<span style="color:#f92672">.</span>shape,num_steps,betas,one_minus_alphas_bar_sqrt)
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        fig,axs <span style="color:#f92672">=</span> plt<span style="color:#f92672">.</span>subplots(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">10</span>,figsize<span style="color:#f92672">=</span>(<span style="color:#ae81ff">28</span>,<span style="color:#ae81ff">3</span>))
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">for</span> i <span style="color:#f92672">in</span> range(<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">11</span>):
+</span></span><span style="display:flex;"><span>            cur_x <span style="color:#f92672">=</span> x_seq[i<span style="color:#f92672">*</span><span style="color:#ae81ff">10</span>]<span style="color:#f92672">.</span>detach()
+</span></span><span style="display:flex;"><span>            axs[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>scatter(cur_x[:,<span style="color:#ae81ff">0</span>],cur_x[:,<span style="color:#ae81ff">1</span>],color<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;red&#39;</span>,edgecolor<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;white&#39;</span>);
+</span></span><span style="display:flex;"><span>            axs[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_axis_off();
+</span></span><span style="display:flex;"><span>            axs[i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>]<span style="color:#f92672">.</span>set_title(<span style="color:#e6db74">&#39;$q(\mathbf</span><span style="color:#e6db74">{x}</span><span style="color:#e6db74">_{&#39;</span><span style="color:#f92672">+</span>str(i<span style="color:#f92672">*</span><span style="color:#ae81ff">10</span>)<span style="color:#f92672">+</span><span style="color:#e6db74">&#39;})$&#39;</span>)
+</span></span></code></pre></div><h3 id="参数平滑器">参数平滑器<a hidden class="anchor" aria-hidden="true" href="#参数平滑器">#</a></h3>
+<blockquote>
+<p>​	上述代码定义了一个参数平滑器 <code>EMA</code>，用于对模型的参数进行平滑处理。该类的主要功能是维护一个影子参数字典 <code>shadow</code>，其中保存了每个参数的平滑后的数值。</p>
+<p>​	构造函数 <code>__init__</code> 中接收一个参数 <code>mu</code>，用于控制平滑的程度，默认为 0.01。</p>
+<p>​	<code>register</code> 方法用于注册参数，将参数的名称和初始值保存到影子参数字典 <code>shadow</code> 中。</p>
+<p>​	<code>__call__</code> 方法用于对指定参数进行平滑处理。它接收参数名称 <code>name</code> 和参数值 <code>x</code>，首先检查参数名称是否存在于影子参数字典 <code>shadow</code> 中，然后根据指定的平滑系数 <code>mu</code>，计算新的平滑参数值 <code>new_average</code>，并更新影子参数字典中的对应数值。最后返回新的平滑参数值。</p>
+<p>​	通过使用 <code>EMA</code> 类，可以实现对模型参数的平滑更新，使模型在训练过程中的参数变化更加平缓。这可以有助于提高模型的稳定性和收敛性。</p>
+</blockquote>
+<h3 id="训练过程">训练过程<a hidden class="anchor" aria-hidden="true" href="#训练过程">#</a></h3>
+<blockquote>
+<p>​	<code>torch.nn.utils.clip_grad_norm_</code> 是一个用于梯度裁剪的函数，它可以帮助限制梯度的范数，防止梯度爆炸问题。<code>clip_grad_norm_</code> 函数接受两个参数：<code>parameters</code> 和 <code>max_norm</code>。<code>parameters</code> 是模型的参数列表，而 <code>max_norm</code> 是用于裁剪梯度的最大范数值。</p>
+<p>​	在代码中，<code>torch.nn.utils.clip_grad_norm_(model.parameters(), 1.)</code> 表示对模型的所有参数进行梯度裁剪，将梯度的范数限制在 <code>1.0</code> 内。这样可以确保梯度不会过大，避免训练过程中的不稳定性。</p>
+<p>​	接下来，<code>optimizer.step()</code> 是优化器的一个方法，用于更新模型的参数。它根据计算得到的梯度来更新参数，使模型向更好的方向前进。通过执行 <code>optimizer.step()</code>，可以使模型在训练过程中不断优化和更新。</p>
+</blockquote>
+<h3 id="认识dataloader">认识dataloader<a hidden class="anchor" aria-hidden="true" href="#认识dataloader">#</a></h3>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>dataloader <span style="color:#f92672">=</span> torch<span style="color:#f92672">.</span>utils<span style="color:#f92672">.</span>data<span style="color:#f92672">.</span>DataLoader(dataset,batch_size<span style="color:#f92672">=</span>batch_size,shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>)
+</span></span></code></pre></div><blockquote>
+<p>​	<code>torch.utils.data.DataLoader</code> 是 PyTorch 中用于加载数据的工具类。在给定数据集 <code>dataset</code> 的情况下，<code>DataLoader</code> 可以帮助我们以指定的批量大小 <code>batch_size</code> 加载数据，并提供一些额外的功能，如数据打乱（通过设置 <code>shuffle=True</code>）和并行加载数据。</p>
+<p>​	具体来说，上述代码创建了一个 <code>DataLoader</code> 对象 <code>dataloader</code>，它将数据集 <code>dataset</code> 分成以 <code>batch_size</code> 为大小的批次。设置 <code>shuffle=True</code> 表示在每个 epoch 中对数据进行打乱，以增加数据的随机性。</p>
+<p>​	通过使用 <code>dataloader</code>，我们可以轻松地迭代遍历数据集，每次迭代获得一个批次的数据，方便进行训练或推断操作。</p>
+</blockquote>
+<h2 id="参考">参考<a hidden class="anchor" aria-hidden="true" href="#参考">#</a></h2>
+<p><a href="https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#:~:text=Diffusion%20models%20are%20inspired%20by%20non-equilibrium%20thermodynamics.%20They,to%20construct%20desired%20data%20samples%20from%20the%20noise.">[什么是扩散模型？ |利尔日志 (lilianweng.github.io)](https://lilianweng.github.io/posts/2021-07-11-diffusion-models/#:~:text=Diffusion models are inspired by non-equilibrium thermodynamics. They,to construct desired data samples from the noise.)</a></p>
+<p><a href="https://www.bilibili.com/video/BV1b541197HX/?spm_id_from=333.337.search-card.all.click&amp;vd_source=860dab0009d45f18b212f3b99520fa03">Probabilistic Diffusion Model概率扩散模型理论与完整PyTorch代码详细解读_哔哩哔哩_bilibili</a></p>
+<p><a href="https://t.bilibili.com/700526762586538024?spm_id_from=333.999.0.0">deep_thoughts的扩散模型笔记 (bilibili.com)</a></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="https://answerBoom.github.io/tags/%E6%89%A9%E6%95%A3%E6%A8%A1%E5%9E%8B/">扩散模型</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="https://answerBoom.github.io">🐻 liyBlog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+<script>
+    document.querySelectorAll('pre > code').forEach((codeblock) => {
+        const container = codeblock.parentNode.parentNode;
+
+        const copybutton = document.createElement('button');
+        copybutton.classList.add('copy-code');
+        copybutton.innerHTML = 'copy';
+
+        function copyingDone() {
+            copybutton.innerHTML = 'copied!';
+            setTimeout(() => {
+                copybutton.innerHTML = 'copy';
+            }, 2000);
+        }
+
+        copybutton.addEventListener('click', (cb) => {
+            if ('clipboard' in navigator) {
+                navigator.clipboard.writeText(codeblock.textContent);
+                copyingDone();
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNodeContents(codeblock);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            try {
+                document.execCommand('copy');
+                copyingDone();
+            } catch (e) { };
+            selection.removeRange(range);
+        });
+
+        if (container.classList.contains("highlight")) {
+            container.appendChild(copybutton);
+        } else if (container.parentNode.firstChild == container) {
+            
+        } else if (codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.nodeName == "TABLE") {
+            
+            codeblock.parentNode.parentNode.parentNode.parentNode.parentNode.appendChild(copybutton);
+        } else {
+            
+            codeblock.parentNode.appendChild(copybutton);
+        }
+    });
+</script>
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+      renderMathInElement(document.body, {
+              delimiters: [
+                  {left: "$$", right: "$$", display: true},
+                  {left: "$", right: "$", display: false}
+              ]
+          });
+    });
+</script>
+</body>
+
+</html>

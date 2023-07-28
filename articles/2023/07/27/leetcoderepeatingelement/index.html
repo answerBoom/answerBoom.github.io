@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Leetcode 重复元素 | liyBlog</title>
+<meta name="keywords" content="算法, leetcode">
+<meta name="description" content="leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
+bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
+int temp; int i=low,j=high-1; if(low&lt;high){ 发现输出结果，基准值右边的两个数不会调换次序
+如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归
+修改后提交代码如下
+void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&lt;high){ temp=nums[i]; while(i&lt;j){ while(j&gt;i&amp;&amp;nums[j]&gt;=temp)j--; if(j&gt;i){ nums[i]=nums[j]; i&#43;&#43;; } while(i&lt;j&amp;&amp;nums[i]&lt;=temp)i&#43;&#43;; if(i&lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i&#43;1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&lt;numsSize-1;i&#43;&#43;){ if(nums[i]==nums[i&#43;1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
+#include &lt;stdio.h&gt; #include &lt;stdlib.">
+<meta name="author" content="">
+<link rel="canonical" href="/articles/2023/07/27/leetcoderepeatingelement/">
+<link crossorigin="anonymous" href="/assets/css/stylesheet.f1ce240cfe5af969a7d47c7624c2a49eda79c4e4fd31a81b2d14d80a5fbc3546.css" integrity="sha256-8c4kDP5a&#43;Wmn1Hx2JMKkntp5xOT9MagbLRTYCl&#43;8NUY=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="mask-icon" href="safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Leetcode 重复元素" />
+<meta property="og:description" content="leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
+bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
+int temp; int i=low,j=high-1; if(low&lt;high){ 发现输出结果，基准值右边的两个数不会调换次序
+如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归
+修改后提交代码如下
+void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&lt;high){ temp=nums[i]; while(i&lt;j){ while(j&gt;i&amp;&amp;nums[j]&gt;=temp)j--; if(j&gt;i){ nums[i]=nums[j]; i&#43;&#43;; } while(i&lt;j&amp;&amp;nums[i]&lt;=temp)i&#43;&#43;; if(i&lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i&#43;1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&lt;numsSize-1;i&#43;&#43;){ if(nums[i]==nums[i&#43;1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
+#include &lt;stdio.h&gt; #include &lt;stdlib." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/articles/2023/07/27/leetcoderepeatingelement/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-07-27T16:36:16+08:00" />
+<meta property="article:modified_time" content="2023-07-27T16:36:16+08:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Leetcode 重复元素"/>
+<meta name="twitter:description" content="leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
+bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
+int temp; int i=low,j=high-1; if(low&lt;high){ 发现输出结果，基准值右边的两个数不会调换次序
+如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归
+修改后提交代码如下
+void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&lt;high){ temp=nums[i]; while(i&lt;j){ while(j&gt;i&amp;&amp;nums[j]&gt;=temp)j--; if(j&gt;i){ nums[i]=nums[j]; i&#43;&#43;; } while(i&lt;j&amp;&amp;nums[i]&lt;=temp)i&#43;&#43;; if(i&lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i&#43;1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&lt;numsSize-1;i&#43;&#43;){ if(nums[i]==nums[i&#43;1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
+#include &lt;stdio.h&gt; #include &lt;stdlib."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [, 
+    {
+      "@type": "ListItem",
+      "position":  3 ,
+      "name": "Leetcode 重复元素",
+      "item": "/articles/2023/07/27/leetcoderepeatingelement/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Leetcode 重复元素",
+  "name": "Leetcode 重复元素",
+  "description": "leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素\nbool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改\nint temp; int i=low,j=high-1; if(low\u0026lt;high){ 发现输出结果，基准值右边的两个数不会调换次序\n如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归\n修改后提交代码如下\nvoid quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low\u0026lt;high){ temp=nums[i]; while(i\u0026lt;j){ while(j\u0026gt;i\u0026amp;\u0026amp;nums[j]\u0026gt;=temp)j--; if(j\u0026gt;i){ nums[i]=nums[j]; i++; } while(i\u0026lt;j\u0026amp;\u0026amp;nums[i]\u0026lt;=temp)i++; if(i\u0026lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i+1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i\u0026lt;numsSize-1;i++){ if(nums[i]==nums[i+1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下\n#include \u0026lt;stdio.h\u0026gt; #include \u0026lt;stdlib.",
+  "keywords": [
+    "算法", "leetcode"
+  ],
+  "articleBody": "leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素\nbool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改\nint temp; int i=low,j=high-1; if(low\u003chigh){ 发现输出结果，基准值右边的两个数不会调换次序\n如：输入{0，3，4，1，6，5} 得到输出{0，3，1，4，5，6} 最后发现原来是j=high-1，每次递归会使high-1， 当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归\n修改后提交代码如下\nvoid quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low\u003chigh){ temp=nums[i]; while(i\u003cj){ while(j\u003ei\u0026\u0026nums[j]\u003e=temp)j--; if(j\u003ei){ nums[i]=nums[j]; i++; } while(i\u003cj\u0026\u0026nums[i]\u003c=temp)i++; if(i\u003cj){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i+1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i\u003cnumsSize-1;i++){ if(nums[i]==nums[i+1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下\n#include #include bool quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low\u003chigh){ temp=nums[i]; while(i\u003cj){ while(j\u003ei\u0026\u0026nums[j]\u003e=temp){ if(nums[j]==temp) { return true; } j--; } if(j\u003ei){ nums[i]=nums[j]; i++; } while(i\u003cj\u0026\u0026nums[i]\u003c=temp) { if(nums[i]==temp) { return true; } i++; } if(i\u003cj){ nums[j]=nums[i]; j--; } } nums[i]=temp; if(quicksort(nums,low,i-1))return true; if(quicksort(nums,i+1,high))return true; } return false; } bool containsDuplicate(int* nums, int numsSize){ int i; if(quicksort(nums,0,numsSize-1)){ return true; } // for(i=0;i",
+  "wordCount" : "157",
+  "inLanguage": "en",
+  "datePublished": "2023-07-27T16:36:16+08:00",
+  "dateModified": "2023-07-27T16:36:16+08:00",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "/articles/2023/07/27/leetcoderepeatingelement/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "liyBlog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="" accesskey="h" title="liyBlog (Alt + H)">liyBlog</a>
+            <div class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <ul id="menu">
+            <li>
+                <a href="/categories/" title="分类">
+                    <span>分类</span>
+                </a>
+            </li>
+            <li>
+                <a href="/archives/" title="归档">
+                    <span>归档</span>
+                </a>
+            </li>
+            <li>
+                <a href="/tags/" title="标签">
+                    <span>标签</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Leetcode 重复元素
+    </h1>
+    <div class="post-meta"><span title='2023-07-27 16:36:16 +0800 CST'>July 27, 2023</span>
+
+</div>
+  </header> <div class="toc">
+    <details  open>
+        <summary accesskey="c" title="(Alt + C)">
+            <span class="details">Table of Contents</span>
+        </summary>
+
+        <div class="inner"><ul>
+                <li>
+                    <a href="#leetcode%e5%ad%98%e5%9c%a8%e9%87%8d%e5%a4%8d%e5%85%83%e7%b4%a0" aria-label="leetcode存在重复元素：">leetcode存在重复元素：</a>
+                </li>
+            </ul>
+        </div>
+    </details>
+</div>
+
+  <div class="post-content"><h1 id="leetcode存在重复元素">leetcode存在重复元素：<a hidden class="anchor" aria-hidden="true" href="#leetcode存在重复元素">#</a></h1>
+<p>昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">containsDuplicate</span>(<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> nums, <span style="color:#66d9ef">int</span> numsSize){
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">quicksort</span>(nums,<span style="color:#ae81ff">0</span>,numsSize);
+</span></span></code></pre></div><p>后来在quicksort内修改</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">int</span> temp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>low,j<span style="color:#f92672">=</span>high<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(low<span style="color:#f92672">&lt;</span>high){
+</span></span></code></pre></div><p>发现输出结果，基准值右边的两个数不会调换次序</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">如：输入</span>{<span style="color:#ae81ff">0</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">4</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">6</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">5</span>}
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">得到输出</span>{<span style="color:#ae81ff">0</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">4</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">5</span><span style="color:#960050;background-color:#1e0010">，</span><span style="color:#ae81ff">6</span>}
+</span></span></code></pre></div><p>最后发现原来是j=high-1，每次递归会使high-1，
+当最后一个子数组只剩2个元素时，high-1=low，使得最后的数组元素不会比较大小直接返回上次递归</p>
+<p>修改后提交代码如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">quicksort</span>(<span style="color:#66d9ef">int</span> nums[],<span style="color:#66d9ef">int</span> low,<span style="color:#66d9ef">int</span> high){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> temp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>low,j<span style="color:#f92672">=</span>high;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(low<span style="color:#f92672">&lt;</span>high){
+</span></span><span style="display:flex;"><span>            temp<span style="color:#f92672">=</span>nums[i];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span>(i<span style="color:#f92672">&lt;</span>j){
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span>(j<span style="color:#f92672">&gt;</span>i<span style="color:#f92672">&amp;&amp;</span>nums[j]<span style="color:#f92672">&gt;=</span>temp)j<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(j<span style="color:#f92672">&gt;</span>i){
+</span></span><span style="display:flex;"><span>                nums[i]<span style="color:#f92672">=</span>nums[j];
+</span></span><span style="display:flex;"><span>                i<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span>(i<span style="color:#f92672">&lt;</span>j<span style="color:#f92672">&amp;&amp;</span>nums[i]<span style="color:#f92672">&lt;=</span>temp)i<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(i<span style="color:#f92672">&lt;</span>j){
+</span></span><span style="display:flex;"><span>                nums[j]<span style="color:#f92672">=</span>nums[i];
+</span></span><span style="display:flex;"><span>                j<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        nums[i]<span style="color:#f92672">=</span>temp;
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">quicksort</span>(nums,low,i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>        <span style="color:#a6e22e">quicksort</span>(nums,i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,high);
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">containsDuplicate</span>(<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> nums, <span style="color:#66d9ef">int</span> numsSize){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> i;
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">quicksort</span>(nums,<span style="color:#ae81ff">0</span>,numsSize<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>);
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span>(i<span style="color:#f92672">=</span><span style="color:#ae81ff">0</span>;i<span style="color:#f92672">&lt;</span>numsSize<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>;i<span style="color:#f92672">++</span>){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(nums[i]<span style="color:#f92672">==</span>nums[i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>]){
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture，
+代码如下</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-c" data-lang="c"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdlib.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">quicksort</span>(<span style="color:#66d9ef">int</span> nums[],<span style="color:#66d9ef">int</span> low,<span style="color:#66d9ef">int</span> high){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> temp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span> i<span style="color:#f92672">=</span>low,j<span style="color:#f92672">=</span>high;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(low<span style="color:#f92672">&lt;</span>high){
+</span></span><span style="display:flex;"><span>            temp<span style="color:#f92672">=</span>nums[i];
+</span></span><span style="display:flex;"><span>            <span style="color:#66d9ef">while</span>(i<span style="color:#f92672">&lt;</span>j){
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span>(j<span style="color:#f92672">&gt;</span>i<span style="color:#f92672">&amp;&amp;</span>nums[j]<span style="color:#f92672">&gt;=</span>temp){
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(nums[j]<span style="color:#f92672">==</span>temp)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                j<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(j<span style="color:#f92672">&gt;</span>i){
+</span></span><span style="display:flex;"><span>                nums[i]<span style="color:#f92672">=</span>nums[j];
+</span></span><span style="display:flex;"><span>                i<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">while</span>(i<span style="color:#f92672">&lt;</span>j<span style="color:#f92672">&amp;&amp;</span>nums[i]<span style="color:#f92672">&lt;=</span>temp)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(nums[i]<span style="color:#f92672">==</span>temp)
+</span></span><span style="display:flex;"><span>                {
+</span></span><span style="display:flex;"><span>                    <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                i<span style="color:#f92672">++</span>;
+</span></span><span style="display:flex;"><span>                }
+</span></span><span style="display:flex;"><span>                <span style="color:#66d9ef">if</span>(i<span style="color:#f92672">&lt;</span>j){
+</span></span><span style="display:flex;"><span>                nums[j]<span style="color:#f92672">=</span>nums[i];
+</span></span><span style="display:flex;"><span>                j<span style="color:#f92672">--</span>;
+</span></span><span style="display:flex;"><span>            }
+</span></span><span style="display:flex;"><span>            
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        nums[i]<span style="color:#f92672">=</span>temp;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">quicksort</span>(nums,low,i<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>))<span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">quicksort</span>(nums,i<span style="color:#f92672">+</span><span style="color:#ae81ff">1</span>,high))<span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span>        }
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">bool</span> <span style="color:#a6e22e">containsDuplicate</span>(<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> nums, <span style="color:#66d9ef">int</span> numsSize){
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">int</span> i;
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">if</span>(<span style="color:#a6e22e">quicksort</span>(nums,<span style="color:#ae81ff">0</span>,numsSize<span style="color:#f92672">-</span><span style="color:#ae81ff">1</span>)){
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">return</span> true;
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">// for(i=0;i&lt;numsSize-1;i++){
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//     if(nums[i]==nums[i+1]){
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//         return true;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">//     }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#75715e">// }
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#66d9ef">return</span> false;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>结果提交时间还是超了，这里对快速排序的优化并不能提高快速排序的平均复杂度nlogn，当数组很大且重复的数出现在靠后位置时，只是省略了快速排序后的单次循环，而快速排序本身的时间复杂度趋向n^2.</p>
+<blockquote>
+<p><strong>在最优情况下</strong>，每次都划分得很均匀，如果排序n个关键字，其递归树的深度就为 [log2n]+1（ [x] 表示不大于 x 的最大整数），即仅需递归 log2n 次，需要时间为T（n）的话，第一次应该是需要对整个数组扫描一遍，做n次比较。然后，获得的枢轴将数组一分为二，那么各自还需要T（n/2）的时间（注意是最好情况，所以平分两半）。于是不断地划分下去在最优的情况下，快速排序算法的时间复杂度为O(nlogn)。</p>
+</blockquote>
+<blockquote>
+<p><strong>快速排序最坏情况</strong>
+当待排序的序列为正序或逆序排列时，且每次划分只得到一个比上一次划分少一个记录的子序列，注意另一个为空。如果递归树画出来，它就是一棵斜树。此时需要执行n‐1次递归调用，且第i次划分需要经过n‐i次关键字的比较才能找到第i个记录，也就是枢轴的位置，因此比较次数为
+，最终其时间复杂度为O(n^2)。</p>
+</blockquote>
+<p>很纳闷，于是查看了c语言提供的qsort源码，发现qsort并不是简单的快速排序，而是在快速排序的基础上进行了优化。</p>
+<p><strong>还是太年轻了。</strong></p>
+
+
+  </div>
+
+  <footer class="post-footer">
+    <ul class="post-tags">
+      <li><a href="/tags/%E7%AE%97%E6%B3%95/">算法</a></li>
+      <li><a href="/tags/leetcode/">leetcode</a></li>
+    </ul>
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2023 <a href="">liyBlog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://github.com/adityatelange/hugo-PaperMod/" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
