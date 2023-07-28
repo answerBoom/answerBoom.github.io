@@ -15,15 +15,15 @@ int temp; int i=low,j=high-1; if(low&lt;high){ 发现输出结果，基准值右
 void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&lt;high){ temp=nums[i]; while(i&lt;j){ while(j&gt;i&amp;&amp;nums[j]&gt;=temp)j--; if(j&gt;i){ nums[i]=nums[j]; i&#43;&#43;; } while(i&lt;j&amp;&amp;nums[i]&lt;=temp)i&#43;&#43;; if(i&lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i&#43;1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&lt;numsSize-1;i&#43;&#43;){ if(nums[i]==nums[i&#43;1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
 #include &lt;stdio.h&gt; #include &lt;stdlib.">
 <meta name="author" content="">
-<link rel="canonical" href="https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/">
-<link crossorigin="anonymous" href="/assets/css/stylesheet.bf5f9f73cf17311d52cedbcda82c922e91b2f566d88a85ad9f5b5a08b586bd5f.css" integrity="sha256-v1&#43;fc88XMR1SztvNqCySLpGy9WbYioWtn1taCLWGvV8=" rel="preload stylesheet" as="style">
-<script defer crossorigin="anonymous" src="/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
+<link rel="canonical" href="answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/">
+<link crossorigin="anonymous" href="/answerboom.github.io/assets/css/stylesheet.bf5f9f73cf17311d52cedbcda82c922e91b2f566d88a85ad9f5b5a08b586bd5f.css" integrity="sha256-v1&#43;fc88XMR1SztvNqCySLpGy9WbYioWtn1taCLWGvV8=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/answerboom.github.io/assets/js/highlight.acb54fd32bbc1982428b8850317e45d076b95012730a5936667e6bc21777692a.js" integrity="sha256-rLVP0yu8GYJCi4hQMX5F0Ha5UBJzClk2Zn5rwhd3aSo="
     onload="hljs.initHighlightingOnLoad();"></script>
-<link rel="icon" href="https://answerboom.github.io/favicon.ico">
-<link rel="icon" type="image/png" sizes="16x16" href="https://answerboom.github.io/favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="https://answerboom.github.io/favicon-32x32.png">
-<link rel="apple-touch-icon" href="https://answerboom.github.io/apple-touch-icon.png">
-<link rel="mask-icon" href="https://answerboom.github.io/safari-pinned-tab.svg">
+<link rel="icon" href="answerboom.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="answerboom.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="answerboom.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="answerboom.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="answerboom.github.io/safari-pinned-tab.svg">
 <meta name="theme-color" content="#2e2e33">
 <meta name="msapplication-TileColor" content="#2e2e33">
 <noscript>
@@ -71,7 +71,7 @@ int temp; int i=low,j=high-1; if(low&lt;high){ 发现输出结果，基准值右
 void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&lt;high){ temp=nums[i]; while(i&lt;j){ while(j&gt;i&amp;&amp;nums[j]&gt;=temp)j--; if(j&gt;i){ nums[i]=nums[j]; i&#43;&#43;; } while(i&lt;j&amp;&amp;nums[i]&lt;=temp)i&#43;&#43;; if(i&lt;j){ nums[j]=nums[i]; j--; } } nums[i]=temp; quicksort(nums,low,i-1); quicksort(nums,i&#43;1,high); } } bool containsDuplicate(int* nums, int numsSize){ int i; quicksort(nums,0,numsSize-1); for(i=0;i&lt;numsSize-1;i&#43;&#43;){ if(nums[i]==nums[i&#43;1]){ return true; } } return false; } 提交时间复杂度还是太高，就像能不能在快速排序的时候就进行判断，如果排序时候遇到相同的数直接返回ture，这里一开始写返回false但是最后递归的时候深层的递归返回不会结束整个递归，只是结束当前递归返回上次递归，而最后的结果会被最上层的递归覆盖掉，于是加了if判断，若下层递归为ture及存在重复元素，直接返回ture， 代码如下
 #include &lt;stdio.h&gt; #include &lt;stdlib." />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/" /><meta property="article:section" content="posts" />
+<meta property="og:url" content="answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/" /><meta property="article:section" content="posts" />
 <meta property="article:published_time" content="2021-10-01T11:37:16+08:00" />
 <meta property="article:modified_time" content="2021-10-01T11:37:16+08:00" />
 
@@ -95,7 +95,7 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
       "@type": "ListItem",
       "position":  3 ,
       "name": "Leetcode 重复元素",
-      "item": "https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/"
+      "item": "answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/"
     }
   ]
 }
@@ -117,14 +117,14 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
   "dateModified": "2021-10-01T11:37:16+08:00",
   "mainEntityOfPage": {
     "@type": "WebPage",
-    "@id": "https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/"
+    "@id": "answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/"
   },
   "publisher": {
     "@type": "Organization",
     "name": "🐻 liyBlog",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://answerboom.github.io/favicon.ico"
+      "url": "answerboom.github.io/favicon.ico"
     }
   }
 }
@@ -146,7 +146,7 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
 <header class="header">
     <nav class="nav">
         <div class="logo">
-            <a href="https://answerboom.github.io" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
+            <a href="answerboom.github.io" accesskey="h" title="🐻 liyBlog (Alt + H)">🐻 liyBlog</a>
             <div class="logo-switches">
                 <button id="theme-toggle" accesskey="t" title="(Alt + T)">
                     <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 24 24"
@@ -172,27 +172,27 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
         </div>
         <ul id="menu">
             <li>
-                <a href="https://answerboom.github.io/" title="主页">
+                <a href="answerboom.github.io/answerboom.github.io/" title="主页">
                     <span>主页</span>
                 </a>
             </li>
             <li>
-                <a href="https://answerboom.github.io/archives/" title="归档">
+                <a href="answerboom.github.io/answerboom.github.io/archives/" title="归档">
                     <span>归档</span>
                 </a>
             </li>
             <li>
-                <a href="https://answerboom.github.io/categories/" title="分类">
+                <a href="answerboom.github.io/answerboom.github.io/categories/" title="分类">
                     <span>分类</span>
                 </a>
             </li>
             <li>
-                <a href="https://answerboom.github.io/tags/" title="标签">
+                <a href="answerboom.github.io/answerboom.github.io/tags/" title="标签">
                     <span>标签</span>
                 </a>
             </li>
             <li>
-                <a href="https://answerboom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
+                <a href="answerboom.github.io/answerboom.github.io/search/" title="查找 (Alt &#43; /)" accesskey=/>
                     <span>查找</span>
                 </a>
             </li>
@@ -203,7 +203,7 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
 
 <article class="post-single">
   <header class="post-header">
-    <div class="breadcrumbs"><a href="https://answerboom.github.io">Home</a></div>
+    <div class="breadcrumbs"><a href="answerboom.github.io">Home</a></div>
     <h1 class="post-title">
       Leetcode 重复元素
     </h1>
@@ -344,15 +344,15 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
 
   <footer class="post-footer">
     <ul class="post-tags">
-      <li><a href="https://answerboom.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a></li>
-      <li><a href="https://answerboom.github.io/tags/leetcode/">leetcode</a></li>
+      <li><a href="answerboom.github.io/tags/%E7%AE%97%E6%B3%95/">算法</a></li>
+      <li><a href="answerboom.github.io/tags/leetcode/">leetcode</a></li>
     </ul>
   </footer>
 </article>
     </main>
     
 <footer class="footer">
-    <span>&copy; 2023 <a href="https://answerboom.github.io">🐻 liyBlog</a></span>
+    <span>&copy; 2023 <a href="answerboom.github.io">🐻 liyBlog</a></span>
     <span>
         Powered by
         <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
@@ -464,22 +464,6 @@ void quicksort(int nums[],int low,int high){ int temp; int i=low,j=high; if(low&
             
             codeblock.parentNode.appendChild(copybutton);
         }
-    });
-</script>
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/katex.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0-rc.1/contrib/auto-render.min.js"></script>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-      renderMathInElement(document.body, {
-              delimiters: [
-                  {left: "$$", right: "$$", display: true},
-                  {left: "$", right: "$", display: false}
-              ]
-          });
     });
 </script>
 </body>

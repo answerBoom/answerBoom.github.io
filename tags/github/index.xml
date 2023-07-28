@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>github on 🐻 liyBlog</title>
-    <link>https://answerboom.github.io/tags/github/</link>
+    <link>answerboom.github.io/tags/github/</link>
     <description>Recent content in github on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 08 Jun 2023 20:12:22 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 08 Jun 2023 20:12:22 +0800</lastBuildDate><atom:link href="answerboom.github.io/tags/github/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Github Error</title>
-      <link>https://answerboom.github.io/articles/2023/06/08/github-error/</link>
+      <link>answerboom.github.io/articles/2023/06/08/github-error/</link>
       <pubDate>Thu, 08 Jun 2023 20:12:22 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/06/08/github-error/</guid>
+      <guid>answerboom.github.io/articles/2023/06/08/github-error/</guid>
       <description>$ git commit -m &amp;ldquo;first commit&amp;quot;错误 丢失或跳过git add .或git commit可能导致此错误：
 $ git commit -m &amp;#34;first commit&amp;#34; On branch main Initial commit Untracked files: (use &amp;#34;git add &amp;lt;file&amp;gt;...&amp;#34; to include in what will be committed) .gitignore README.md _config.butterfly.yml _config.yml gulpfile.js package.json repoPic/ scaffolds/ source/ themes/ nothing added to commit but untracked files present (use &amp;#34;git add&amp;#34; to track) $ git push -u origin main错误 error: src refspec main does not match any error: failed to push some refs to &amp;#39;https://github.</description>
     </item>

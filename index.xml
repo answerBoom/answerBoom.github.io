@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>🐻 liyBlog</title>
-    <link>https://answerboom.github.io/</link>
+    <link>answerboom.github.io/</link>
     <description>Recent content on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="answerboom.github.io/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>扩散模型</title>
-      <link>https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/</link>
+      <link>answerboom.github.io/articles/2023/07/27/diffusion-models-note/</link>
       <pubDate>Thu, 27 Jul 2023 21:11:50 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/</guid>
+      <guid>answerboom.github.io/articles/2023/07/27/diffusion-models-note/</guid>
       <description>扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
 学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
 上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
@@ -23,30 +23,30 @@
     
     <item>
       <title>Github Error</title>
-      <link>https://answerboom.github.io/articles/2023/06/08/github-error/</link>
+      <link>answerboom.github.io/articles/2023/06/08/github-error/</link>
       <pubDate>Thu, 08 Jun 2023 20:12:22 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/06/08/github-error/</guid>
+      <guid>answerboom.github.io/articles/2023/06/08/github-error/</guid>
       <description>$ git commit -m &amp;ldquo;first commit&amp;quot;错误 丢失或跳过git add .或git commit可能导致此错误：
 $ git commit -m &amp;#34;first commit&amp;#34; On branch main Initial commit Untracked files: (use &amp;#34;git add &amp;lt;file&amp;gt;...&amp;#34; to include in what will be committed) .gitignore README.md _config.butterfly.yml _config.yml gulpfile.js package.json repoPic/ scaffolds/ source/ themes/ nothing added to commit but untracked files present (use &amp;#34;git add&amp;#34; to track) $ git push -u origin main错误 error: src refspec main does not match any error: failed to push some refs to &amp;#39;https://github.</description>
     </item>
     
     <item>
       <title>Hexo学习记录</title>
-      <link>https://answerboom.github.io/articles/2023/06/08/hexonote/</link>
+      <link>answerboom.github.io/articles/2023/06/08/hexonote/</link>
       <pubDate>Thu, 08 Jun 2023 19:03:00 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/06/08/hexonote/</guid>
+      <guid>answerboom.github.io/articles/2023/06/08/hexonote/</guid>
       <description>vscode启动和部署 需要先设置vscode权限 get-ExectionPolicy set-ExecutionPolicy RemoteSigned 本地启动hexo hexo s 部署到github npm install hexo-deployer-git --save hexo clean &amp;amp;&amp;amp; hexo generate &amp;amp;&amp;amp; hexo deploy // Git BASH终端 hexo clean; hexo generate; hexo deploy // VSCODE终端 修改 _config.yml 文件 在blog-demo目录下的_config.yml，就是整个Hexo框架的配置文件了。可以在里面修改大部分的配置。详细可参考官方的配置描述。 修改最后一行的配置，将repository修改为你自己的github项目地址即可，还有分支要改为main代表主分支（注意缩进）。
 deploy: type: git repository: git@github.com:answer/answer.github.io.git branch: main hexo clean：删除之前生成的文件，若未生成过静态文件，可忽略此命令。 hexo generate：生成静态文章，可以用hexo g缩写 hexo deploy：部署文章，可以用hexo d缩写 vscode推送项目到GitHub仓库 https://www.fomal.cc/posts/e593433d.html</description>
     </item>
     
     <item>
       <title>风格迁移</title>
-      <link>https://answerboom.github.io/articles/2023/05/30/styletransfer/</link>
+      <link>answerboom.github.io/articles/2023/05/30/styletransfer/</link>
       <pubDate>Tue, 30 May 2023 15:00:21 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
+      <guid>answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
       <description>学习风格迁移算法，第一次连接服务器运行深度学习代码，如何使用conda、jupter
 服务器上跑深度学习代码 一、 连接服务器 （1）用户名密码 （2）linux操作 pwd：查看当前所在路径 watch nvidia-smi：查看显卡情况 top：查看cpu使用情况 df -h：查看磁盘空间 wget URL：下载文件 （3）conda操作 conda env list：列出所有环境 activate env-name：激活环境 conda list：查看当前环境中安装的包 conda env create -f environment.yaml --prefix /media/s304/Data/condaenv/Inst：根据文件创建环境并指定路径 二、 pycharm远程连接服务器 设置Connection 建立mapping 设置excluded paths 设置代码自动上传（Options） 设置python Interpreter 其他功能 打开服务器的terminal(可开多个)：Tools-Start SSH session 查看服务器文件：Tools-Development-Browse Remote Host 如果有参数，可以在edit configurations中设置parameters 三、遇到的问题 1. 跑代码的过程中cpu使用率较高，而gpu使用率为0 ​	解决方法：tensorflow-gpu版本问题、以及版本冲突问题，重新下包后解决。
 风格迁移 fast-transfer python style.py --style data/style/style1.jpg \ --checkpoint-dir data/checkpoints \ --test data/content/girlandforest.jpg \ --test-dir data/result \ --content-weight 1.</description>
@@ -54,10 +54,10 @@ deploy: type: git repository: git@github.com:answer/answer.github.io.git branch:
     
     <item>
       <title>Blog笔记</title>
-      <link>https://answerboom.github.io/articles/2022/12/27/blognote/</link>
+      <link>answerboom.github.io/articles/2022/12/27/blognote/</link>
       <pubDate>Tue, 27 Dec 2022 17:16:20 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2022/12/27/blognote/</guid>
+      <guid>answerboom.github.io/articles/2022/12/27/blognote/</guid>
       <description>blog项目笔记 mybatis plus 1. 类注解 @Data @NoArgsConstructor @AllArgsConstructor @TableName(&amp;#34;sg_article&amp;#34;) @Accessors(chain = true) public class Article{ } @Data：注在类上，提供类的get、set、equals、hashCode、toString方法
 @NoArgsConstructor：提供类的无参构造
 @AllArgsConstructor：提供类的全参构造
@@ -74,10 +74,10 @@ eq方法中有三个参数，第一个boolean为true时引入加入后两个参�
     
     <item>
       <title>ElementUi图片上传</title>
-      <link>https://answerboom.github.io/articles/2022/10/21/elementuiimageupload/</link>
+      <link>answerboom.github.io/articles/2022/10/21/elementuiimageupload/</link>
       <pubDate>Fri, 21 Oct 2022 16:50:19 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2022/10/21/elementuiimageupload/</guid>
+      <guid>answerboom.github.io/articles/2022/10/21/elementuiimageupload/</guid>
       <description>ruoyi实现不需要token访问静态资源 在config/SecurityConfig配置
 .antMatchers( HttpMethod.GET, &amp;#34;/&amp;#34;, &amp;#34;/*.html&amp;#34;, &amp;#34;/**/*.html&amp;#34;, &amp;#34;/**/*.css&amp;#34;, &amp;#34;/**/*.js&amp;#34;, //profile下有很多文件，只开放头像类的文件 &amp;#34;/profile/upload/**&amp;#34;, &amp;#34;/profile/**&amp;#34;, &amp;#34;/profile/avatar/**&amp;#34; &amp;ldquo;/xxx/**&amp;ldquo;让xxx路径下的全部文件访问不需要token
 在config/ResourcesConfig中增加
@@ -86,10 +86,10 @@ eq方法中有三个参数，第一个boolean为true时引入加入后两个参�
     
     <item>
       <title>Leetcode 重复元素</title>
-      <link>https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</link>
+      <link>answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</link>
       <pubDate>Fri, 01 Oct 2021 11:37:16 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</guid>
+      <guid>answerboom.github.io/articles/2021/10/01/leetcoderepeatingelement/</guid>
       <description>leetcode存在重复元素： 昨天写了leetcode存在重复元素问题，一开始暴力求解用两个for循环，时间复杂度太高了，想了想用快速排序，看了题解，题解直接调用c语言的qsort函数，于是手写了一个简单的快速排序算法，一开始栈上溢，发现是快速排序传入参数，数组的长度numsize直接作为数组的最后一个元素
 bool containsDuplicate(int* nums, int numsSize){ quicksort(nums,0,numsSize); 后来在quicksort内修改
 int temp; int i=low,j=high-1; if(low&amp;lt;high){ 发现输出结果，基准值右边的两个数不会调换次序

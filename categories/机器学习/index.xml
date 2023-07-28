@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>机器学习 on 🐻 liyBlog</title>
-    <link>https://answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
+    <link>answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/</link>
     <description>Recent content in 机器学习 on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Thu, 27 Jul 2023 21:11:50 +0800</lastBuildDate><atom:link href="answerboom.github.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>扩散模型</title>
-      <link>https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/</link>
+      <link>answerboom.github.io/articles/2023/07/27/diffusion-models-note/</link>
       <pubDate>Thu, 27 Jul 2023 21:11:50 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/07/27/diffusion-models-note/</guid>
+      <guid>answerboom.github.io/articles/2023/07/27/diffusion-models-note/</guid>
       <description>扩散模型学习笔记 思路 训练个数为T（时刻数）的神经网络模型。通过正向扩散获得每个时刻t的均值和方差。利用重参数化技巧，将随机性转移到$\epsilon$上，整个过程看作是马尔可夫过程，每个时刻的分布如下图所示。根据下列公式可以得到任意时刻的$q(x_t|x_{t-1})$
 学习$p_\theta$去近似q()，根据贝叶斯可以算出逆向过程q的均值和方差：
 上述公式的均值为$b\over -2a$，方差为$1\over a$,计算p的对数损失，使其最大，
@@ -23,10 +23,10 @@
     
     <item>
       <title>风格迁移</title>
-      <link>https://answerboom.github.io/articles/2023/05/30/styletransfer/</link>
+      <link>answerboom.github.io/articles/2023/05/30/styletransfer/</link>
       <pubDate>Tue, 30 May 2023 15:00:21 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
+      <guid>answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
       <description>学习风格迁移算法，第一次连接服务器运行深度学习代码，如何使用conda、jupter
 服务器上跑深度学习代码 一、 连接服务器 （1）用户名密码 （2）linux操作 pwd：查看当前所在路径 watch nvidia-smi：查看显卡情况 top：查看cpu使用情况 df -h：查看磁盘空间 wget URL：下载文件 （3）conda操作 conda env list：列出所有环境 activate env-name：激活环境 conda list：查看当前环境中安装的包 conda env create -f environment.yaml --prefix /media/s304/Data/condaenv/Inst：根据文件创建环境并指定路径 二、 pycharm远程连接服务器 设置Connection 建立mapping 设置excluded paths 设置代码自动上传（Options） 设置python Interpreter 其他功能 打开服务器的terminal(可开多个)：Tools-Start SSH session 查看服务器文件：Tools-Development-Browse Remote Host 如果有参数，可以在edit configurations中设置parameters 三、遇到的问题 1. 跑代码的过程中cpu使用率较高，而gpu使用率为0 ​	解决方法：tensorflow-gpu版本问题、以及版本冲突问题，重新下包后解决。
 风格迁移 fast-transfer python style.py --style data/style/style1.jpg \ --checkpoint-dir data/checkpoints \ --test data/content/girlandforest.jpg \ --test-dir data/result \ --content-weight 1.</description>

@@ -2,17 +2,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
   <channel>
     <title>python on 🐻 liyBlog</title>
-    <link>https://answerboom.github.io/tags/python/</link>
+    <link>answerboom.github.io/tags/python/</link>
     <description>Recent content in python on 🐻 liyBlog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 30 May 2023 15:00:21 +0800</lastBuildDate><atom:link href="https://answerboom.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Tue, 30 May 2023 15:00:21 +0800</lastBuildDate><atom:link href="answerboom.github.io/tags/python/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>风格迁移</title>
-      <link>https://answerboom.github.io/articles/2023/05/30/styletransfer/</link>
+      <link>answerboom.github.io/articles/2023/05/30/styletransfer/</link>
       <pubDate>Tue, 30 May 2023 15:00:21 +0800</pubDate>
       
-      <guid>https://answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
+      <guid>answerboom.github.io/articles/2023/05/30/styletransfer/</guid>
       <description>学习风格迁移算法，第一次连接服务器运行深度学习代码，如何使用conda、jupter
 服务器上跑深度学习代码 一、 连接服务器 （1）用户名密码 （2）linux操作 pwd：查看当前所在路径 watch nvidia-smi：查看显卡情况 top：查看cpu使用情况 df -h：查看磁盘空间 wget URL：下载文件 （3）conda操作 conda env list：列出所有环境 activate env-name：激活环境 conda list：查看当前环境中安装的包 conda env create -f environment.yaml --prefix /media/s304/Data/condaenv/Inst：根据文件创建环境并指定路径 二、 pycharm远程连接服务器 设置Connection 建立mapping 设置excluded paths 设置代码自动上传（Options） 设置python Interpreter 其他功能 打开服务器的terminal(可开多个)：Tools-Start SSH session 查看服务器文件：Tools-Development-Browse Remote Host 如果有参数，可以在edit configurations中设置parameters 三、遇到的问题 1. 跑代码的过程中cpu使用率较高，而gpu使用率为0 ​	解决方法：tensorflow-gpu版本问题、以及版本冲突问题，重新下包后解决。
 风格迁移 fast-transfer python style.py --style data/style/style1.jpg \ --checkpoint-dir data/checkpoints \ --test data/content/girlandforest.jpg \ --test-dir data/result \ --content-weight 1.</description>
